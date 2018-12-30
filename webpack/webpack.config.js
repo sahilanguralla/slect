@@ -15,7 +15,7 @@ const libraryName = 'Slect';
 
 const config = {
     name: 'slect',
-    entry: ['src/index.ts'],
+    entry: ['./src/index.ts'],
     output: {
         filename: `${libraryName.toLowerCase()}.min.js`,
         library: libraryName,

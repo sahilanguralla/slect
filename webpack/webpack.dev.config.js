@@ -1,3 +1,4 @@
+const path = require('path');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.config.js');
 
@@ -17,8 +18,9 @@ const config = merge(baseConfig, {
         publicPath: '/'
     },
     devServer: {
+        open: true,
         host: '0.0.0.0',
-        port: 3000,
+        port: 5000,
         contentBase: baseDir,
         compress: true,
         historyApiFallback: true,
