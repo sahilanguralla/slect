@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "target": "es5",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "lib": ["es2015", "dom"],
+        "types": ["webpack-env"],
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "strict": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
