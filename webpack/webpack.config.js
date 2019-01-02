@@ -15,7 +15,7 @@ const libraryName = 'Slect';
 
 const config = {
     name: 'slect',
-    entry: ['./src/index.ts'],
+    entry: { slect: './src/index.ts' },
     output: {
         filename: `${libraryName.toLowerCase()}.min.js`,
         library: libraryName,
@@ -31,7 +31,9 @@ const config = {
             {
                 test: /\.(less|css)$/,
                 use: [
-                    { loader: MiniCssExtractPlugin.loader },
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
                     { loader: 'css-loader' },
                     {
                         loader: 'postcss-loader',
@@ -47,7 +49,7 @@ const config = {
                 loader: 'ts-loader'
             },
             {
-                test: /\.(ttf|woff|svg|eot)$/,
+                test: /\.(ttf|woff|eot)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -78,6 +80,10 @@ const config = {
                         ]
                     }
                 }
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline-loader?classPrefix'
             }
         ]
     },
@@ -85,8 +91,7 @@ const config = {
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: 'css/[name].[hash].css',
-            chunkFilename: 'css/[id].[hash].css'
+            filename: '[name].min.css'
         }),
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp

@@ -1,10 +1,13 @@
 class GeneralUtils {
-    static similarity(s1: string, s2: string) {
+    static similarity(s1: string, s2: string, exactMatch = true) {
         let longer = s1;
         let shorter = s2;
         if (s1.length < s2.length) {
             longer = s2;
             shorter = s1;
+        }
+        if(!exactMatch) {
+            longer = longer.slice(0, shorter.length)
         }
         let longerLength = longer.length;
         if (longerLength == 0) {

@@ -6,7 +6,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 let baseDir = `./dist/`;
 
-const config = merge(baseConfig.config, {
+const config = merge(baseConfig, {
     mode: 'production',
     devtool: 'source-map',
     output: {
@@ -18,4 +18,5 @@ const config = merge(baseConfig.config, {
         })
     ]
 });
+console.log(config);
 module.exports = config;

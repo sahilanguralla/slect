@@ -27,7 +27,7 @@ const config = merge(baseConfig, {
         overlay: true
     },
     plugins: [
-        new CopyWebpackPlugin([{ from: `./demo/*`, to: `/` }]),
+        new CopyWebpackPlugin([{ from: `./demo/**/*`, to: `./`, flatten: true }]),
         new HTMLWebpackPlugin({
             template: `./demo/demo.html`,
             filename: './index.html',

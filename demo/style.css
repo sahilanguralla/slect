@@ -1,0 +1,9 @@
+* {
+    box-sizing: border-box;
+}
+
+#select-list-1 {
+    position: relative;
+    height: 30px;
+    width: 200px;
+}
