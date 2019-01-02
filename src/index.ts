@@ -94,6 +94,24 @@ class Slect {
 
         window.addEventListener('click', this.onClickBody);
 
+        // adding mutation observer if available to remove event listener after element is removed
+        if (typeof MutationObserver === 'function' && this.element.parentNode) {
+            const observer = new MutationObserver(mutations => {
+                let removed = false;
+                mutations.forEach(mutation => {
+                    mutation.removedNodes.forEach((node: Node) => {
+                        if (node === this.element) removed = true;
+                    });
+                });
+                if (removed) {
+                    window.removeEventListener('click', this.onClickBody);
+                }
+            });
+            observer.observe(this.element.parentNode, {
+                childList: true
+            });
+        }
+
         this.suggestionList.onSelect = this.onSelect;
     }
 
@@ -127,12 +145,11 @@ class Slect {
     };
 
     onBlur = () => {
-        HTMLElementUtils.removeClass(this.element, "focused");
+        HTMLElementUtils.removeClass(this.element, 'focused');
     };
 
     onFocus = () => {
-        HTMLElementUtils.addClass(this.element, "focused");
-
+        HTMLElementUtils.addClass(this.element, 'focused');
     };
 
     updateInput() {
