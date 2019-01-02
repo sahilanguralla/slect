@@ -2,13 +2,13 @@ import SlectOption from './SlectOption';
 import SlectSuggestionListItem from './SlectSuggestionListItem';
 import HTMLElementUtils from './services/HTMLElementUtils';
 
-class SlectSuggestionList {
-    private opts: SlectOption[] = [];
+class SlectSuggestionList<T extends SlectOption> {
+    private opts: T[] = [];
 
-    get options(): SlectOption[] {
+    get options(): T[] {
         return this.opts;
     }
-    set options(options: SlectOption[]) {
+    set options(options: T[]) {
         if (
             this.opts.length !== options.length ||
             options.find((option, index) => this.opts[index] !== option)
@@ -19,17 +19,17 @@ class SlectSuggestionList {
         }
     }
 
-    private listItems: SlectSuggestionListItem[] = [];
+    private listItems: SlectSuggestionListItem<T>[] = [];
 
-    private selectedItems: SlectSuggestionListItem[] = [];
+    private selectedItems: SlectSuggestionListItem<T>[] = [];
     get selectedOptions() {
         return this.selectedItems.map(item => item.option);
     }
     set selectedOptions(options: SlectOption[]) {
         this.selectedItems = this.listItems.reduce(
             (
-                items: SlectSuggestionListItem[],
-                item: SlectSuggestionListItem
+                items: SlectSuggestionListItem<T>[],
+                item: SlectSuggestionListItem<T>
             ) => {
                 if (options.indexOf(item.option) !== -1)  {
                     item.select(true);
@@ -41,11 +41,11 @@ class SlectSuggestionList {
         );
     }
 
-    onSelect?: (options: SlectOption[]) => void;
+    onSelect?: (options: T[]) => void;
 
     domElement: HTMLElement;
 
-    constructor(options: SlectOption[]) {
+    constructor(options: T[]) {
         this.opts = options;
         this.domElement = document.createElement('div');
         this.init();
@@ -64,7 +64,7 @@ class SlectSuggestionList {
         });
     }
 
-    onClickListItem = (item: SlectSuggestionListItem) => {
+    onClickListItem = (item: SlectSuggestionListItem<T>) => {
         if (this.selectedItems.length > 0) {
             this.selectedItems[0].select(false);
         }

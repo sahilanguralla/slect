@@ -1,9 +1,9 @@
 import SlectOption from './SlectOption';
 
-interface SlectConfig {
+interface SlectConfig<T extends SlectOption> {
     allowViewAllOptions: boolean;
     maxSuggestions: number;
     minTextLengthForSuggestions: number;
-    onSelect: (options: SlectOption[]) => void;
+    onSelect: (options: T[]) => void;
 }
 export default SlectConfig;

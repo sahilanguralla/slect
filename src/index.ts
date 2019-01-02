@@ -7,27 +7,27 @@ import chevronIcon from './assets/icons/chevron-down.svg';
 import './assets/less/slect.less';
 import HTMLElementUtils from './services/HTMLElementUtils';
 
-class Slect {
-    options: SlectOption[];
+class Slect<T extends SlectOption> {
+    options: T[];
 
-    private selectedOpts: SlectOption[] = [];
+    private selectedOpts: T[] = [];
     get selectedOptions() {
         return this.selectedOpts;
     }
-    set selectedOptions(options: SlectOption[]) {
+    set selectedOptions(options: T[]) {
         this.selectedOpts = options;
         this.suggestionList.selectedOptions = options;
         this.updateInput();
     }
 
-    private config: SlectConfig;
+    private config: SlectConfig<T>;
 
     private readonly inputEl: HTMLInputElement;
-    private readonly suggestionList: SlectSuggestionList;
+    private readonly suggestionList: SlectSuggestionList<T>;
 
     private readonly element: HTMLElement;
 
-    static readonly defaultConfig: SlectConfig = {
+    static readonly defaultConfig: SlectConfig<SlectOption> = {
         minTextLengthForSuggestions: 3,
         maxSuggestions: 0,
         allowViewAllOptions: true,
@@ -43,8 +43,8 @@ class Slect {
 
     constructor(
         selector: string,
-        options: SlectOption[],
-        config?: Partial<SlectConfig>
+        options: T[],
+        config?: Partial<SlectConfig<T>>
     ) {
         const el = document.body.querySelector(selector);
         if (el instanceof HTMLElement) this.element = el;
@@ -60,7 +60,7 @@ class Slect {
         this.inputEl = document.createElement('input');
         this.element.appendChild(this.inputEl);
 
-        this.suggestionList = new SlectSuggestionList([]);
+        this.suggestionList = new SlectSuggestionList<T>([]);
 
         this.init();
     }
@@ -115,7 +115,7 @@ class Slect {
         this.suggestionList.onSelect = this.onSelect;
     }
 
-    onSelect = (options: SlectOption[]) => {
+    onSelect = (options: T[]) => {
         this.selectedOpts = options;
         this.config.onSelect(options);
         this.updateInput();
@@ -160,7 +160,7 @@ class Slect {
 
     updateSuggestionList() {
         const text = this.inputEl.value;
-        let validOptions: SlectOption[] = [];
+        let validOptions: T[] = [];
         if (
             this.config.allowViewAllOptions ||
             text.length >= this.config.minTextLengthForSuggestions
@@ -176,9 +176,9 @@ class Slect {
                         (
                             prevValue: {
                                 similarity: number;
-                                option: SlectOption;
+                                option: T;
                             }[],
-                            option: SlectOption
+                            option: T
                         ) => {
                             const similarity = GeneralUtils.similarity(
                                 text,
@@ -199,7 +199,7 @@ class Slect {
                         (
                             optionA: {
                                 similarity: number;
-                                option: SlectOption;
+                                option: T;
                             },
                             optionB: { similarity: number; option: SlectOption }
                         ) => {
@@ -207,10 +207,8 @@ class Slect {
                         }
                     )
                     .map(
-                        (optionSim: {
-                            similarity: number;
-                            option: SlectOption;
-                        }) => optionSim.option
+                        (optionSim: { similarity: number; option: T }) =>
+                            optionSim.option
                     );
             }
         }

@@ -2,16 +2,16 @@ import SlectOption from './SlectOption';
 import HTMLElementUtils from './services/HTMLElementUtils';
 import tickIcon from './assets/icons/tick.svg';
 
-class SlectSuggestionListItem {
-    option: SlectOption;
+class SlectSuggestionListItem<T extends SlectOption> {
+    option: T;
 
     domElement: HTMLElement;
 
-    onClick?: (item: SlectSuggestionListItem) => void;
+    onClick?: (item: SlectSuggestionListItem<T>) => void;
 
     private selected: boolean = false;
 
-    constructor(option: SlectOption) {
+    constructor(option: T) {
         this.option = option;
         this.domElement = document.createElement('div');
         this.init();
