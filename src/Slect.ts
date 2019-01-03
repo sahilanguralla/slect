@@ -42,14 +42,19 @@ class Slect<T extends SlectOption> {
     };
 
     constructor(
-        selector: string,
+        element: HTMLElement | string,
         options: T[],
         config?: Partial<SlectConfig<T>>
     ) {
-        const el = document.body.querySelector(selector);
-        if (el instanceof HTMLElement) this.element = el;
-        else throw new Error(`No element with given selector found in DOM.`);
-
+        if (element instanceof HTMLElement) this.element = element;
+        else if (typeof element === 'string') {
+            const el = document.body.querySelector(element);
+            if (el instanceof HTMLElement) this.element = el;
+            else
+                throw new Error(`No element with given selector found in DOM.`);
+        } else {
+            throw new Error('Invalid selector.')
+        }
         this.options = options;
 
         this.config = Slect.defaultConfig;
