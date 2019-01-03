@@ -153,9 +153,8 @@ exports.default = Slect_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var GeneralUtils_1 = __webpack_require__(3);
 var SlectSuggestionList_1 = __webpack_require__(4);
-var chevron_down_svg_1 = __webpack_require__(7);
-__webpack_require__(8);
 var HTMLElementUtils_1 = __webpack_require__(0);
+__webpack_require__(7);
 var Slect = /** @class */ (function () {
     function Slect(element, options, config) {
         var _this = this;
@@ -241,7 +240,7 @@ var Slect = /** @class */ (function () {
                 _this.onFocus();
             });
             HTMLElementUtils_1.default.addClass(chevContainerEl, 'slect-chevron-container');
-            chevContainerEl.innerHTML = chevron_down_svg_1.default;
+            chevContainerEl.innerHTML = __webpack_require__(8);
             this.element.appendChild(chevContainerEl);
             this.suggestionList.options = this.options;
         }
@@ -306,7 +305,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.6-2-g2abe959";
+            return "v0.0.7-1-g3a885d3";
         },
         enumerable: true,
         configurable: true
@@ -461,6 +460,7 @@ var SlectSuggestionList = /** @class */ (function () {
         HTMLElementUtils_1.default.clearDOM(this.domElement);
         return Promise.all(this.listItems.map(function (item) { return item.render(); })).then(function (els) {
             els.forEach(function (el) { return _this.domElement.append(el); });
+            _this.domElement.scrollTo(0, 0);
             return _this.domElement;
         });
     };
@@ -477,7 +477,6 @@ exports.default = SlectSuggestionList;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTMLElementUtils_1 = __webpack_require__(0);
-var tick_svg_1 = __webpack_require__(6);
 var SlectSuggestionListItem = /** @class */ (function () {
     function SlectSuggestionListItem(option) {
         this.selected = false;
@@ -511,7 +510,7 @@ var SlectSuggestionListItem = /** @class */ (function () {
             _this.domElement.dataset.optionValue = _this.option.value;
             var tickContainerEl = document.createElement('div');
             HTMLElementUtils_1.default.addClass(tickContainerEl, 'slect-checkmark-container');
-            tickContainerEl.innerHTML = tick_svg_1.default;
+            tickContainerEl.innerHTML = __webpack_require__(6);
             _this.domElement.appendChild(tickContainerEl);
             _this.select(_this.selected);
             resolve(_this.domElement);
@@ -530,15 +529,15 @@ module.exports = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http:/
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 129 129\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" enable-background=\"new 0 0 129 129\"><g><path d=\"m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z\"></path></g></svg>"
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 129 129\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" enable-background=\"new 0 0 129 129\"><g><path d=\"m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z\"></path></g></svg>"
 
 /***/ })
 /******/ ])["default"];
