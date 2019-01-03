@@ -1,8 +1,8 @@
 const webpack = require('webpack');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin({
@@ -14,10 +14,13 @@ let supportedBrowsers = ['> 0.01%', 'android >= 2'];
 const libraryName = 'Slect';
 
 const config = {
-    name: 'slect',
-    entry: { slect: './src/index.ts' },
+    name: libraryName.toLowerCase(),
+    entry: {
+        slect: './src/index.ts',
+        'slect.min': './src/index.ts'
+    },
     output: {
-        filename: `${libraryName.toLowerCase()}.min.js`,
+        filename: `[name].js`,
         library: libraryName,
         libraryExport: 'default',
         libraryTarget: 'umd',
@@ -38,7 +41,7 @@ const config = {
                     {
                         loader: 'postcss-loader',
                         options: {
-                            plugins: () => [autoprefixer, cssnano]
+                            plugins: () => [autoprefixer]
                         }
                     },
                     { loader: 'less-loader' }
@@ -91,7 +94,7 @@ const config = {
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: '[name].min.css'
+            filename: '[name].css'
         }),
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp

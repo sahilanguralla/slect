@@ -1,0 +1,17 @@
+demo/
+src/
+webpack/
+.babelrc
+.browserslistrc
+.eslintignore
+.eslintrc.yml
+.eslintrc-airbnb
+.gitignore
+.prettierrc
+.tslintrc-airbnb.json
+favicon.png
+index.ts
+package.json
+package-lock.json
+tsconfig.json
+
