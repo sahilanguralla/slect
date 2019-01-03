@@ -157,7 +157,7 @@ var chevron_down_svg_1 = __webpack_require__(7);
 __webpack_require__(8);
 var HTMLElementUtils_1 = __webpack_require__(0);
 var Slect = /** @class */ (function () {
-    function Slect(selector, options, config) {
+    function Slect(element, options, config) {
         var _this = this;
         this.selectedOpts = [];
         this.onSelect = function (options) {
@@ -191,11 +191,18 @@ var Slect = /** @class */ (function () {
         this.onFocus = function () {
             HTMLElementUtils_1.default.addClass(_this.element, 'focused');
         };
-        var el = document.body.querySelector(selector);
-        if (el instanceof HTMLElement)
-            this.element = el;
-        else
-            throw new Error("No element with given selector found in DOM.");
+        if (element instanceof HTMLElement)
+            this.element = element;
+        else if (typeof element === 'string') {
+            var el = document.body.querySelector(element);
+            if (el instanceof HTMLElement)
+                this.element = el;
+            else
+                throw new Error("No element with given selector found in DOM.");
+        }
+        else {
+            throw new Error('Invalid selector.');
+        }
         this.options = options;
         this.config = Slect.defaultConfig;
         if (config) {
@@ -299,7 +306,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.5";
+            return "v0.0.6-2-g2abe959";
         },
         enumerable: true,
         configurable: true
