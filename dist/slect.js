@@ -162,8 +162,8 @@ var Slect = /** @class */ (function () {
         this.onSelect = function (options) {
             _this.selectedOpts = options;
             _this.config.onSelect(options);
-            _this.updateInput();
-            _this.onBlur();
+            _this.updateSelection();
+            _this.closeSuggestionList();
         };
         this.onClickBody = function (event) {
             var target = event.target || event.srcElement || event.currentTarget;
@@ -174,7 +174,7 @@ var Slect = /** @class */ (function () {
             }
         };
         this.onInputKeyUp = function () {
-            _this.onInputChange();
+            _this.updateSuggestionList();
         };
         this.onInputKeyDown = function (event) {
             if (event.keyCode === 9) {
@@ -184,8 +184,37 @@ var Slect = /** @class */ (function () {
         this.onInputChange = function () {
             _this.updateSuggestionList();
         };
+        this.onClickClearButton = function () {
+            HTMLElementUtils_1.default.removeClass(_this.element, 'slect-selected');
+            _this.clearSelectedOptions();
+            _this.closeSuggestionList();
+        };
+        this.onClickExpandListButton = function () {
+            _this.inputEl.focus();
+            _this.onFocus();
+        };
         this.onBlur = function () {
-            HTMLElementUtils_1.default.removeClass(_this.element, 'focused');
+            var newValue = _this.inputEl.value;
+            var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
+            if (selectedOption) {
+                _this.selectedOptions = [selectedOption];
+                _this.inputEl.value = selectedOption.label;
+            }
+            else if (_this.config.allowCustomOption &&
+                _this.inputEl.value.length > 0) {
+                _this.selectedOptions = [
+                    {
+                        label: newValue,
+                        value: newValue.toLowerCase(),
+                        custom: true
+                    }
+                ];
+                _this.config.onSelect(_this.selectedOptions);
+            }
+            else {
+                _this.clearSelectedOptions();
+            }
+            _this.closeSuggestionList();
         };
         this.onFocus = function () {
             HTMLElementUtils_1.default.addClass(_this.element, 'focused');
@@ -218,8 +247,7 @@ var Slect = /** @class */ (function () {
         },
         set: function (options) {
             this.selectedOpts = options;
-            this.suggestionList.selectedOptions = options;
-            this.updateInput();
+            this.updateSelection();
         },
         enumerable: true,
         configurable: true
@@ -228,22 +256,32 @@ var Slect = /** @class */ (function () {
         var _this = this;
         HTMLElementUtils_1.default.addClass(this.element, 'slect');
         HTMLElementUtils_1.default.addClass(this.inputEl, 'slect-input');
+        this.inputEl.placeholder = this.config.placeholder;
         this.inputEl.addEventListener('change', this.onInputChange);
         this.inputEl.addEventListener('keyup', this.onInputKeyUp);
         this.inputEl.addEventListener('keydown', this.onInputKeyDown);
         this.inputEl.addEventListener('focus', this.onFocus);
         this.suggestionList.render().then(function (el) { return _this.element.appendChild(el); });
+        var slectActionsContainer = document.createElement('div');
+        HTMLElementUtils_1.default.addClass(slectActionsContainer, 'slect-actions-container');
+        var clearContainerEl = document.createElement('div');
+        HTMLElementUtils_1.default.addClass(clearContainerEl, 'slect-clear-container');
+        clearContainerEl.innerHTML = __webpack_require__(8);
+        clearContainerEl.addEventListener('click', this.onClickClearButton);
+        slectActionsContainer.appendChild(clearContainerEl);
         if (this.config.allowViewAllOptions) {
+            var separatorEl = document.createElement('span');
+            HTMLElementUtils_1.default.addClass(separatorEl, 'slect-actions-separator');
+            slectActionsContainer.appendChild(separatorEl);
             var chevContainerEl = document.createElement('div');
-            chevContainerEl.addEventListener('click', function () {
-                _this.inputEl.focus();
-                _this.onFocus();
-            });
+            chevContainerEl.addEventListener('click', this.onClickExpandListButton);
             HTMLElementUtils_1.default.addClass(chevContainerEl, 'slect-chevron-container');
-            chevContainerEl.innerHTML = __webpack_require__(8);
-            this.element.appendChild(chevContainerEl);
+            chevContainerEl.innerHTML = __webpack_require__(9);
+            slectActionsContainer.appendChild(chevContainerEl);
+            HTMLElementUtils_1.default.addClass(this.element, 'slect-expandable');
             this.suggestionList.options = this.options;
         }
+        this.element.appendChild(slectActionsContainer);
         window.addEventListener('click', this.onClickBody);
         // adding mutation observer if available to remove event listener after element is removed
         if (typeof MutationObserver === 'function' && this.element.parentNode) {
@@ -264,6 +302,24 @@ var Slect = /** @class */ (function () {
             });
         }
         this.suggestionList.onSelect = this.onSelect;
+    };
+    Slect.prototype.updateSelection = function () {
+        if (this.selectedOptions.length > 0) {
+            HTMLElementUtils_1.default.addClass(this.element, 'slect-selected');
+        }
+        else {
+            HTMLElementUtils_1.default.removeClass(this.element, 'slect-selected');
+        }
+        this.updateInput();
+        this.suggestionList.selectedOptions = this.selectedOptions;
+    };
+    Slect.prototype.clearSelectedOptions = function () {
+        this.inputEl.value = '';
+        this.selectedOptions = [];
+        this.updateSuggestionList();
+    };
+    Slect.prototype.closeSuggestionList = function () {
+        HTMLElementUtils_1.default.removeClass(this.element, 'focused');
     };
     Slect.prototype.updateInput = function () {
         this.inputEl.value = this.selectedOptions
@@ -305,7 +361,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.7-1-g3a885d3";
+            return "v0.0.8-1-g1adf82b";
         },
         enumerable: true,
         configurable: true
@@ -318,7 +374,13 @@ var Slect = /** @class */ (function () {
             console &&
                 console.info &&
                 console.info('onSelect is not handled. You can do the same by passing via config', options);
-        }
+        },
+        get placeholder() {
+            return this.allowCustomOption
+                ? 'Please enter...'
+                : 'Please choose...';
+        },
+        allowCustomOption: false
     };
     return Slect;
 }());
@@ -437,6 +499,9 @@ var SlectSuggestionList = /** @class */ (function () {
                     item.select(true);
                     items.push(item);
                 }
+                else {
+                    item.select(false);
+                }
                 return items;
             }, []);
         },
@@ -537,7 +602,13 @@ module.exports = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http:/
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 129 129\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" enable-background=\"new 0 0 129 129\"><g><path d=\"m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z\"></path></g></svg>"
+module.exports = "<svg viewBox=\"0 0 20 20\" aria-hidden=\"true\" focusable=\"false\" class=\"css-19bqh2r\"><path d=\"M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z\"></path></svg>"
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = "<svg viewBox=\"0 0 20 20\" aria-hidden=\"true\" focusable=\"false\" class=\"css-19bqh2r\"><path d=\"M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z\"></path></svg>"
 
 /***/ })
 /******/ ])["default"];

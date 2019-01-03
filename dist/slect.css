@@ -5,6 +5,7 @@
 .slect-input {
   height: 100%;
   width: 100%;
+  font-size: inherit;
   z-index: 1;
   display: inline-block;
   padding: 8px 8px;
@@ -23,10 +24,7 @@
 .slect-input:focus {
   outline: none;
 }
-.slect-chevron-container {
-  display: inline-block;
-  width: 13px;
-  height: 13px;
+.slect-actions-container {
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
@@ -35,7 +33,32 @@
        -o-transform: translateY(-50%);
           transform: translateY(-50%);
   right: 6px;
+  height: 13px;
+}
+.slect-clear-container,
+.slect-actions-separator,
+.slect-chevron-container {
+  display: none;
+  width: 13px;
+  height: 13px;
   cursor: pointer;
+}
+.slect-actions-separator {
+  -webkit-align-self: stretch;
+      -ms-flex-item-align: stretch;
+          align-self: stretch;
+  background-color: #cccccc;
+  width: 1px;
+  margin: 0 10px;
+}
+.slect.slect-expandable .slect-chevron-container {
+  display: inline-block;
+}
+.slect.slect-selected .slect-clear-container {
+  display: inline-block;
+}
+.slect.slect-selected.slect-expandable .slect-actions-separator {
+  display: inline-block;
 }
 .slect.focused .slect-suggestion-list {
   display: block;
