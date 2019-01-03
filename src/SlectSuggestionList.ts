@@ -31,7 +31,7 @@ class SlectSuggestionList<T extends SlectOption> {
                 items: SlectSuggestionListItem<T>[],
                 item: SlectSuggestionListItem<T>
             ) => {
-                if (options.indexOf(item.option) !== -1)  {
+                if (options.indexOf(item.option) !== -1) {
                     item.select(true);
                     items.push(item);
                 }
@@ -80,6 +80,7 @@ class SlectSuggestionList<T extends SlectOption> {
         return Promise.all(this.listItems.map(item => item.render())).then(
             els => {
                 els.forEach(el => this.domElement.append(el));
+                this.domElement.scrollTo(0, 0);
                 return this.domElement;
             }
         );

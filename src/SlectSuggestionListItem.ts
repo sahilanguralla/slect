@@ -1,6 +1,5 @@
 import SlectOption from './SlectOption';
 import HTMLElementUtils from './services/HTMLElementUtils';
-import tickIcon from './assets/icons/tick.svg';
 
 class SlectSuggestionListItem<T extends SlectOption> {
     option: T;
@@ -51,7 +50,7 @@ class SlectSuggestionListItem<T extends SlectOption> {
                 tickContainerEl,
                 'slect-checkmark-container'
             );
-            tickContainerEl.innerHTML = tickIcon;
+            tickContainerEl.innerHTML = require('./assets/icons/tick.svg');
             this.domElement.appendChild(tickContainerEl);
 
             this.select(this.selected);

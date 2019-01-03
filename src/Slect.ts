@@ -2,10 +2,9 @@ import SlectOption from './SlectOption';
 import SlectConfig from './SlectConfig';
 import GeneralUtils from './services/GeneralUtils';
 import SlectSuggestionList from './SlectSuggestionList';
-
-import chevronIcon from './assets/icons/chevron-down.svg';
-import './assets/less/slect.less';
 import HTMLElementUtils from './services/HTMLElementUtils';
+
+import './assets/less/slect.less';
 
 class Slect<T extends SlectOption> {
     options: T[];
@@ -53,7 +52,7 @@ class Slect<T extends SlectOption> {
             else
                 throw new Error(`No element with given selector found in DOM.`);
         } else {
-            throw new Error('Invalid selector.')
+            throw new Error('Invalid selector.');
         }
         this.options = options;
 
@@ -91,7 +90,8 @@ class Slect<T extends SlectOption> {
                 chevContainerEl,
                 'slect-chevron-container'
             );
-            chevContainerEl.innerHTML = chevronIcon;
+
+            chevContainerEl.innerHTML = require('./assets/icons/chevron-down.svg');
             this.element.appendChild(chevContainerEl);
 
             this.suggestionList.options = this.options;
