@@ -32,7 +32,8 @@ const config = merge(baseConfig, {
         new HTMLWebpackPlugin({
             template: `./demo/demo.html`,
             filename: './index.html',
-            favicon: './favicon.png'
+            favicon: './favicon.png',
+            chunks: ['slect.min']
         })
     ]
 });

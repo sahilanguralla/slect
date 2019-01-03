@@ -86,7 +86,7 @@ const config = {
             },
             {
                 test: /\.svg$/,
-                loader: 'svg-inline-loader?classPrefix'
+                loader: 'svg-inline-loader'
             }
         ]
     },
