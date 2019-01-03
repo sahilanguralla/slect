@@ -9,14 +9,13 @@ import './assets/less/slect.less';
 class Slect<T extends SlectOption> {
     options: T[];
 
-    private selectedOpts: T[] = [];
-    get selectedOptions() {
+    private selectedOpts: (T | SlectOption)[] = [];
+    get selectedOptions(): (T | SlectOption)[] {
         return this.selectedOpts;
     }
-    set selectedOptions(options: T[]) {
+    set selectedOptions(options: (T | SlectOption)[]) {
         this.selectedOpts = options;
-        this.suggestionList.selectedOptions = options;
-        this.updateInput();
+        this.updateSelection();
     }
 
     private config: SlectConfig<T>;
@@ -37,7 +36,13 @@ class Slect<T extends SlectOption> {
                     'onSelect is not handled. You can do the same by passing via config',
                     options
                 );
-        }
+        },
+        get placeholder(): string {
+            return this.allowCustomOption
+                ? 'Please enter...'
+                : 'Please choose...';
+        },
+        allowCustomOption: false
     };
 
     constructor(
@@ -73,6 +78,7 @@ class Slect<T extends SlectOption> {
         HTMLElementUtils.addClass(this.element, 'slect');
         HTMLElementUtils.addClass(this.inputEl, 'slect-input');
 
+        this.inputEl.placeholder = this.config.placeholder;
         this.inputEl.addEventListener('change', this.onInputChange);
         this.inputEl.addEventListener('keyup', this.onInputKeyUp);
         this.inputEl.addEventListener('keydown', this.onInputKeyDown);
@@ -80,22 +86,41 @@ class Slect<T extends SlectOption> {
 
         this.suggestionList.render().then(el => this.element.appendChild(el));
 
+        const slectActionsContainer = document.createElement('div');
+        HTMLElementUtils.addClass(
+            slectActionsContainer,
+            'slect-actions-container'
+        );
+
+        const clearContainerEl = document.createElement('div');
+        HTMLElementUtils.addClass(clearContainerEl, 'slect-clear-container');
+        clearContainerEl.innerHTML = require('./assets/icons/cancel.svg');
+        clearContainerEl.addEventListener('click', this.onClickClearButton);
+        slectActionsContainer.appendChild(clearContainerEl);
+
         if (this.config.allowViewAllOptions) {
+            const separatorEl = document.createElement('span');
+            HTMLElementUtils.addClass(separatorEl, 'slect-actions-separator');
+            slectActionsContainer.appendChild(separatorEl);
+
             const chevContainerEl = document.createElement('div');
-            chevContainerEl.addEventListener('click', () => {
-                this.inputEl.focus();
-                this.onFocus();
-            });
+            chevContainerEl.addEventListener(
+                'click',
+                this.onClickExpandListButton
+            );
             HTMLElementUtils.addClass(
                 chevContainerEl,
                 'slect-chevron-container'
             );
 
             chevContainerEl.innerHTML = require('./assets/icons/chevron-down.svg');
-            this.element.appendChild(chevContainerEl);
+            slectActionsContainer.appendChild(chevContainerEl);
 
+            HTMLElementUtils.addClass(this.element, 'slect-expandable');
             this.suggestionList.options = this.options;
         }
+
+        this.element.appendChild(slectActionsContainer);
 
         window.addEventListener('click', this.onClickBody);
 
@@ -120,12 +145,24 @@ class Slect<T extends SlectOption> {
         this.suggestionList.onSelect = this.onSelect;
     }
 
-    onSelect = (options: T[]) => {
+    onSelect = (options: (T | SlectOption)[]) => {
         this.selectedOpts = options;
         this.config.onSelect(options);
-        this.updateInput();
-        this.onBlur();
+        this.updateSelection();
+        this.closeSuggestionList();
     };
+
+    updateSelection() {
+        if (this.selectedOptions.length > 0) {
+            HTMLElementUtils.addClass(this.element, 'slect-selected');
+        } else {
+            HTMLElementUtils.removeClass(this.element, 'slect-selected');
+        }
+
+        this.updateInput();
+
+        this.suggestionList.selectedOptions = this.selectedOptions;
+    }
 
     onClickBody = (event: Event) => {
         const target = event.target || event.srcElement || event.currentTarget;
@@ -136,7 +173,7 @@ class Slect<T extends SlectOption> {
     };
 
     onInputKeyUp = () => {
-        this.onInputChange();
+        this.updateSuggestionList();
     };
 
     onInputKeyDown = (event: KeyboardEvent) => {
@@ -149,9 +186,53 @@ class Slect<T extends SlectOption> {
         this.updateSuggestionList();
     };
 
-    onBlur = () => {
-        HTMLElementUtils.removeClass(this.element, 'focused');
+    onClickClearButton = () => {
+        HTMLElementUtils.removeClass(this.element, 'slect-selected');
+
+        this.clearSelectedOptions();
+        this.closeSuggestionList();
     };
+
+    onClickExpandListButton = () => {
+        this.inputEl.focus();
+        this.onFocus();
+    };
+
+    onBlur = () => {
+        const newValue = this.inputEl.value;
+        const selectedOption = this.options.find(
+            option => option.label.toLowerCase() === newValue.toLowerCase()
+        );
+        if (selectedOption) {
+            this.selectedOptions = [selectedOption];
+            this.inputEl.value = selectedOption.label;
+        } else if (
+            this.config.allowCustomOption &&
+            this.inputEl.value.length > 0
+        ) {
+            this.selectedOptions = [
+                {
+                    label: newValue,
+                    value: newValue.toLowerCase(),
+                    custom: true
+                }
+            ];
+            this.config.onSelect(this.selectedOptions);
+        } else {
+            this.clearSelectedOptions();
+        }
+        this.closeSuggestionList();
+    };
+
+    clearSelectedOptions() {
+        this.inputEl.value = '';
+        this.selectedOptions = [];
+        this.updateSuggestionList();
+    }
+
+    closeSuggestionList() {
+        HTMLElementUtils.removeClass(this.element, 'focused');
+    }
 
     onFocus = () => {
         HTMLElementUtils.addClass(this.element, 'focused');

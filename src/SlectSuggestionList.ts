@@ -34,6 +34,8 @@ class SlectSuggestionList<T extends SlectOption> {
                 if (options.indexOf(item.option) !== -1) {
                     item.select(true);
                     items.push(item);
+                } else {
+                    item.select(false);
                 }
                 return items;
             },

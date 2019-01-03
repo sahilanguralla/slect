@@ -4,6 +4,7 @@
     &-input {
         height: 100%;
         width: 100%;
+        font-size: inherit;
         z-index: 1;
         display: inline-block;
         padding: 8px 8px;
@@ -17,15 +18,43 @@
         }
     }
 
-    &-chevron-container {
-        display: inline-block;
-        width: 13px;
-        height: 13px;
+    &-actions-container {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
         right: 6px;
+        height: 13px;
+    }
+
+    &-clear-container,
+    &-actions-separator,
+    &-chevron-container {
+        display: none;
+        width: 13px;
+        height: 13px;
         cursor: pointer;
+    }
+
+    &-actions-separator {
+        align-self: stretch;
+        background-color: rgb(204, 204, 204);
+        width: 1px;
+        margin: 0 10px;
+    }
+
+    &.slect-expandable {
+        .slect-chevron-container {
+            display: inline-block;
+        }
+    }
+
+    &.slect-selected {
+        .slect-clear-container {
+            display: inline-block;
+        }
+        &.slect-expandable .slect-actions-separator {
+            display: inline-block;
+        }
     }
 
     &.focused {

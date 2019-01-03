@@ -4,6 +4,8 @@ interface SlectConfig<T extends SlectOption> {
     allowViewAllOptions: boolean;
     maxSuggestions: number;
     minTextLengthForSuggestions: number;
-    onSelect: (options: T[]) => void;
+    onSelect: (options: (T|SlectOption)[]) => void;
+    placeholder: string;
+    allowCustomOption: boolean;
 }
 export default SlectConfig;
