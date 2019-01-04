@@ -159,11 +159,11 @@ var Slect = /** @class */ (function () {
     function Slect(element, options, config) {
         var _this = this;
         this.selectedOpts = [];
+        this.focused = false;
         this.onSelect = function (options) {
             _this.selectedOpts = options;
             _this.config.onSelect(options);
-            _this.updateSelection();
-            _this.closeSuggestionList();
+            _this.updateSelectionInView();
         };
         this.onClickBody = function (event) {
             var target = event.target || event.srcElement || event.currentTarget;
@@ -174,7 +174,30 @@ var Slect = /** @class */ (function () {
             }
         };
         this.onInputKeyUp = function () {
-            _this.updateSuggestionList(_this.inputEl.value);
+            var newValue = _this.inputEl.value;
+            var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
+            if (selectedOption) {
+                _this.onSelect([selectedOption]);
+                _this.updateSelectionInView();
+            }
+            else if (_this.inputEl.value.length > 0) {
+                var selectedOpts = [];
+                if (_this.config.allowCustomOption) {
+                    selectedOpts = [
+                        {
+                            label: newValue,
+                            value: newValue.toLowerCase(),
+                            custom: true
+                        }
+                    ];
+                }
+                _this.onSelect(selectedOpts);
+                _this.updateSelectionInView();
+            }
+            else if (_this.inputEl.value.length < 1) {
+                _this.clearSelectedOptions();
+            }
+            _this.updateSuggestionList(newValue);
         };
         this.onInputKeyDown = function (event) {
             if (event.keyCode === 9) {
@@ -184,6 +207,19 @@ var Slect = /** @class */ (function () {
         this.onInputChange = function () {
             _this.updateSuggestionList(_this.inputEl.value);
         };
+        this.onFocus = function () {
+            _this.focused = true;
+            HTMLElementUtils_1.default.addClass(_this.element, 'focused');
+        };
+        this.onBlur = function () {
+            if (_this.focused) {
+                _this.focused = false;
+                if (_this.selectedOptions.length < 1) {
+                    _this.clearSelectedOptions();
+                }
+                _this.closeSuggestionList();
+            }
+        };
         this.onClickClearButton = function () {
             HTMLElementUtils_1.default.removeClass(_this.element, 'slect-selected');
             _this.clearSelectedOptions();
@@ -192,32 +228,6 @@ var Slect = /** @class */ (function () {
         this.onClickExpandListButton = function () {
             _this.inputEl.focus();
             _this.onFocus();
-        };
-        this.onBlur = function () {
-            var newValue = _this.inputEl.value;
-            var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
-            if (selectedOption) {
-                _this.selectedOptions = [selectedOption];
-                _this.inputEl.value = selectedOption.label;
-            }
-            else if (_this.config.allowCustomOption &&
-                _this.inputEl.value.length > 0) {
-                _this.selectedOptions = [
-                    {
-                        label: newValue,
-                        value: newValue.toLowerCase(),
-                        custom: true
-                    }
-                ];
-                _this.config.onSelect(_this.selectedOptions);
-            }
-            else {
-                _this.clearSelectedOptions();
-            }
-            _this.closeSuggestionList();
-        };
-        this.onFocus = function () {
-            HTMLElementUtils_1.default.addClass(_this.element, 'focused');
         };
         if (element instanceof HTMLElement)
             this.element = element;
@@ -248,6 +258,7 @@ var Slect = /** @class */ (function () {
         set: function (options) {
             this.opts = options;
             this.updateSuggestionList();
+            this.validateSelection();
         },
         enumerable: true,
         configurable: true
@@ -258,7 +269,8 @@ var Slect = /** @class */ (function () {
         },
         set: function (options) {
             this.selectedOpts = options;
-            this.updateSelection();
+            this.updateInput();
+            this.updateSelectionInView();
         },
         enumerable: true,
         configurable: true
@@ -312,21 +324,35 @@ var Slect = /** @class */ (function () {
                 childList: true
             });
         }
-        this.suggestionList.onSelect = this.onSelect;
+        this.suggestionList.onSelect = function (options) {
+            _this.onSelect(options);
+            _this.updateInput();
+            _this.updateSelectionInView();
+            _this.closeSuggestionList();
+        };
     };
-    Slect.prototype.updateSelection = function () {
+    Slect.prototype.validateSelection = function () {
+        var _this = this;
+        this.selectedOpts = this.selectedOpts.filter(function (option) {
+            return (option.custom && _this.config.allowCustomOption) ||
+                _this.options.indexOf(option) !== -1;
+        });
+        this.updateSelectionInView();
+        this.updateInput();
+    };
+    Slect.prototype.updateSelectionInView = function () {
         if (this.selectedOptions.length > 0) {
             HTMLElementUtils_1.default.addClass(this.element, 'slect-selected');
         }
         else {
             HTMLElementUtils_1.default.removeClass(this.element, 'slect-selected');
         }
-        this.updateInput();
         this.suggestionList.selectedOptions = this.selectedOptions;
     };
     Slect.prototype.clearSelectedOptions = function () {
         this.inputEl.value = '';
         this.selectedOptions = [];
+        this.config.onSelect([]);
         this.updateSuggestionList();
     };
     Slect.prototype.closeSuggestionList = function () {
@@ -372,7 +398,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.9-1-gbf1a5ca";
+            return "v0.0.10-1-g91943a4";
         },
         enumerable: true,
         configurable: true
