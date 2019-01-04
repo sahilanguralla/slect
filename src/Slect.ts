@@ -7,14 +7,15 @@ import HTMLElementUtils from './services/HTMLElementUtils';
 import './assets/less/slect.less';
 
 class Slect<T extends SlectOption> {
-    private opts: T[];
+    private opts: (T | SlectOption)[];
 
-    get options(): T[] {
+    get options(): (T | SlectOption)[] {
         return this.opts;
     }
-    set options(options: T[]) {
+    set options(options: (T | SlectOption)[]) {
         this.opts = options;
         this.updateSuggestionList();
+        this.validateSelection();
     }
 
     private selectedOpts: (T | SlectOption)[] = [];
@@ -23,7 +24,8 @@ class Slect<T extends SlectOption> {
     }
     set selectedOptions(options: (T | SlectOption)[]) {
         this.selectedOpts = options;
-        this.updateSelection();
+        this.updateInput();
+        this.updateSelectionInView();
     }
 
     private config: SlectConfig<T>;
@@ -52,6 +54,8 @@ class Slect<T extends SlectOption> {
         },
         allowCustomOption: false
     };
+
+    focused: boolean = false;
 
     constructor(
         element: HTMLElement | string,
@@ -125,7 +129,7 @@ class Slect<T extends SlectOption> {
             slectActionsContainer.appendChild(chevContainerEl);
 
             HTMLElementUtils.addClass(this.element, 'slect-expandable');
-            this.suggestionList.options = this.options;
+            this.suggestionList.options = this.options as T[];
         }
 
         this.element.appendChild(slectActionsContainer);
@@ -150,25 +154,36 @@ class Slect<T extends SlectOption> {
             });
         }
 
-        this.suggestionList.onSelect = this.onSelect;
+        this.suggestionList.onSelect = options => {
+            this.onSelect(options);
+            this.updateInput();
+            this.updateSelectionInView();
+            this.closeSuggestionList();
+        };
     }
 
     onSelect = (options: (T | SlectOption)[]) => {
         this.selectedOpts = options;
         this.config.onSelect(options);
-        this.updateSelection();
-        this.closeSuggestionList();
+        this.updateSelectionInView();
     };
 
-    updateSelection() {
+    validateSelection() {
+        this.selectedOpts = this.selectedOpts.filter(
+            option =>
+                (option.custom && this.config.allowCustomOption) ||
+                this.options.indexOf(option) !== -1
+        );
+        this.updateSelectionInView();
+        this.updateInput();
+    }
+
+    updateSelectionInView() {
         if (this.selectedOptions.length > 0) {
             HTMLElementUtils.addClass(this.element, 'slect-selected');
         } else {
             HTMLElementUtils.removeClass(this.element, 'slect-selected');
         }
-
-        this.updateInput();
-
         this.suggestionList.selectedOptions = this.selectedOptions;
     }
 
@@ -181,7 +196,31 @@ class Slect<T extends SlectOption> {
     };
 
     onInputKeyUp = () => {
-        this.updateSuggestionList(this.inputEl.value);
+        const newValue = this.inputEl.value;
+        const selectedOption = this.options.find(
+            option => option.label.toLowerCase() === newValue.toLowerCase()
+        );
+        if (selectedOption) {
+            this.onSelect([selectedOption]);
+            this.updateSelectionInView();
+        } else if (this.inputEl.value.length > 0) {
+            let selectedOpts: SlectOption[] = [];
+            if (this.config.allowCustomOption) {
+                selectedOpts = [
+                    {
+                        label: newValue,
+                        value: newValue.toLowerCase(),
+                        custom: true
+                    }
+                ];
+            }
+            this.onSelect(selectedOpts);
+            this.updateSelectionInView();
+        } else if (this.inputEl.value.length < 1) {
+            this.clearSelectedOptions();
+        }
+
+        this.updateSuggestionList(newValue);
     };
 
     onInputKeyDown = (event: KeyboardEvent) => {
@@ -192,6 +231,22 @@ class Slect<T extends SlectOption> {
 
     onInputChange = () => {
         this.updateSuggestionList(this.inputEl.value);
+    };
+
+    onFocus = () => {
+        this.focused = true;
+        HTMLElementUtils.addClass(this.element, 'focused');
+    };
+
+    onBlur = () => {
+        if (this.focused) {
+            this.focused = false;
+            if (this.selectedOptions.length < 1) {
+                this.clearSelectedOptions();
+            }
+
+            this.closeSuggestionList();
+        }
     };
 
     onClickClearButton = () => {
@@ -206,35 +261,10 @@ class Slect<T extends SlectOption> {
         this.onFocus();
     };
 
-    onBlur = () => {
-        const newValue = this.inputEl.value;
-        const selectedOption = this.options.find(
-            option => option.label.toLowerCase() === newValue.toLowerCase()
-        );
-        if (selectedOption) {
-            this.selectedOptions = [selectedOption];
-            this.inputEl.value = selectedOption.label;
-        } else if (
-            this.config.allowCustomOption &&
-            this.inputEl.value.length > 0
-        ) {
-            this.selectedOptions = [
-                {
-                    label: newValue,
-                    value: newValue.toLowerCase(),
-                    custom: true
-                }
-            ];
-            this.config.onSelect(this.selectedOptions);
-        } else {
-            this.clearSelectedOptions();
-        }
-        this.closeSuggestionList();
-    };
-
     clearSelectedOptions() {
         this.inputEl.value = '';
         this.selectedOptions = [];
+        this.config.onSelect([]);
         this.updateSuggestionList();
     }
 
@@ -242,17 +272,13 @@ class Slect<T extends SlectOption> {
         HTMLElementUtils.removeClass(this.element, 'focused');
     }
 
-    onFocus = () => {
-        HTMLElementUtils.addClass(this.element, 'focused');
-    };
-
     updateInput() {
         this.inputEl.value = this.selectedOptions
             .map(option => option.label)
             .join(', ');
     }
 
-    updateSuggestionList(text:string = '') {
+    updateSuggestionList(text: string = '') {
         let validOptions: T[] = [];
         if (
             this.config.allowViewAllOptions ||
@@ -262,7 +288,7 @@ class Slect<T extends SlectOption> {
             if (this.config.allowViewAllOptions) {
                 exactMatch = false;
             }
-            validOptions = this.options;
+            validOptions = this.options as T[];
             if (text.length > 0) {
                 validOptions = validOptions
                     .reduce(
