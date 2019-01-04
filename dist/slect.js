@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -140,8 +140,59 @@ exports.default = HTMLElementUtils;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Slect_1 = __webpack_require__(2);
-exports.default = Slect_1.default;
+var GeneralUtils = /** @class */ (function () {
+    function GeneralUtils() {
+    }
+    GeneralUtils.similarity = function (s1, s2, exactMatch) {
+        if (exactMatch === void 0) { exactMatch = true; }
+        var longer = s1;
+        var shorter = s2;
+        if (s1.length < s2.length) {
+            longer = s2;
+            shorter = s1;
+        }
+        if (!exactMatch) {
+            longer = longer.slice(0, shorter.length);
+        }
+        var longerLength = longer.length;
+        if (longerLength == 0) {
+            return 1.0;
+        }
+        return ((longerLength - this.editDistance(longer, shorter)) / longerLength);
+    };
+    GeneralUtils.editDistance = function (s1, s2) {
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+        var costs = [];
+        for (var i = 0; i <= s1.length; i++) {
+            var lastValue = i;
+            for (var j = 0; j <= s2.length; j++) {
+                if (i == 0)
+                    costs[j] = j;
+                else {
+                    if (j > 0) {
+                        var newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                            newValue =
+                                Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0)
+                costs[s2.length] = lastValue;
+        }
+        return costs[s2.length];
+    };
+    GeneralUtils.areEqualArrays = function (array1, array2) {
+        return (array1.length === array2.length &&
+            typeof array1.find(function (item, index) { return item !== array2[index]; }) ===
+                'undefined');
+    };
+    return GeneralUtils;
+}());
+exports.default = GeneralUtils;
 
 
 /***/ }),
@@ -151,7 +202,18 @@ exports.default = Slect_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var GeneralUtils_1 = __webpack_require__(3);
+var Slect_1 = __webpack_require__(3);
+exports.default = Slect_1.default;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var GeneralUtils_1 = __webpack_require__(1);
 var SlectSuggestionList_1 = __webpack_require__(4);
 var HTMLElementUtils_1 = __webpack_require__(0);
 __webpack_require__(7);
@@ -161,9 +223,11 @@ var Slect = /** @class */ (function () {
         this.selectedOpts = [];
         this.focused = false;
         this.onSelect = function (options) {
-            _this.selectedOpts = options;
-            _this.config.onSelect(options);
-            _this.updateSelectionInView();
+            if (!GeneralUtils_1.default.areEqualArrays(_this.selectedOpts, options)) {
+                _this.selectedOpts = options;
+                _this.config.onSelect(options);
+                _this.updateSelectionInView();
+            }
         };
         this.onClickBody = function (event) {
             var target = event.target || event.srcElement || event.currentTarget;
@@ -178,7 +242,6 @@ var Slect = /** @class */ (function () {
             var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
             if (selectedOption) {
                 _this.onSelect([selectedOption]);
-                _this.updateSelectionInView();
             }
             else if (_this.inputEl.value.length > 0) {
                 var selectedOpts = [];
@@ -192,7 +255,6 @@ var Slect = /** @class */ (function () {
                     ];
                 }
                 _this.onSelect(selectedOpts);
-                _this.updateSelectionInView();
             }
             else if (_this.inputEl.value.length < 1) {
                 _this.clearSelectedOptions();
@@ -398,7 +460,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.10-1-g91943a4";
+            return "v0.0.11-1-g0575c28";
         },
         enumerable: true,
         configurable: true
@@ -425,63 +487,6 @@ exports.default = Slect;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var GeneralUtils = /** @class */ (function () {
-    function GeneralUtils() {
-    }
-    GeneralUtils.similarity = function (s1, s2, exactMatch) {
-        if (exactMatch === void 0) { exactMatch = true; }
-        var longer = s1;
-        var shorter = s2;
-        if (s1.length < s2.length) {
-            longer = s2;
-            shorter = s1;
-        }
-        if (!exactMatch) {
-            longer = longer.slice(0, shorter.length);
-        }
-        var longerLength = longer.length;
-        if (longerLength == 0) {
-            return 1.0;
-        }
-        return ((longerLength - this.editDistance(longer, shorter)) / longerLength);
-    };
-    GeneralUtils.editDistance = function (s1, s2) {
-        s1 = s1.toLowerCase();
-        s2 = s2.toLowerCase();
-        var costs = [];
-        for (var i = 0; i <= s1.length; i++) {
-            var lastValue = i;
-            for (var j = 0; j <= s2.length; j++) {
-                if (i == 0)
-                    costs[j] = j;
-                else {
-                    if (j > 0) {
-                        var newValue = costs[j - 1];
-                        if (s1.charAt(i - 1) != s2.charAt(j - 1))
-                            newValue =
-                                Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                        costs[j - 1] = lastValue;
-                        lastValue = newValue;
-                    }
-                }
-            }
-            if (i > 0)
-                costs[s2.length] = lastValue;
-        }
-        return costs[s2.length];
-    };
-    return GeneralUtils;
-}());
-exports.default = GeneralUtils;
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -490,6 +495,7 @@ exports.default = GeneralUtils;
 Object.defineProperty(exports, "__esModule", { value: true });
 var SlectSuggestionListItem_1 = __webpack_require__(5);
 var HTMLElementUtils_1 = __webpack_require__(0);
+var GeneralUtils_1 = __webpack_require__(1);
 var SlectSuggestionList = /** @class */ (function () {
     function SlectSuggestionList(options) {
         var _this = this;
@@ -515,9 +521,7 @@ var SlectSuggestionList = /** @class */ (function () {
             return this.opts;
         },
         set: function (options) {
-            var _this = this;
-            if (this.opts.length !== options.length ||
-                options.find(function (option, index) { return _this.opts[index] !== option; })) {
+            if (!GeneralUtils_1.default.areEqualArrays(this.opts, options)) {
                 this.opts = options;
                 this.updateListItems();
                 this.render();
