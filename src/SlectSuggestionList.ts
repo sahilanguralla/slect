@@ -1,6 +1,7 @@
 import SlectOption from './SlectOption';
 import SlectSuggestionListItem from './SlectSuggestionListItem';
 import HTMLElementUtils from './services/HTMLElementUtils';
+import GeneralUtils from './services/GeneralUtils';
 
 class SlectSuggestionList<T extends SlectOption> {
     private opts: T[] = [];
@@ -10,8 +11,7 @@ class SlectSuggestionList<T extends SlectOption> {
     }
     set options(options: T[]) {
         if (
-            this.opts.length !== options.length ||
-            options.find((option, index) => this.opts[index] !== option)
+            !GeneralUtils.areEqualArrays(this.opts, options)
         ) {
             this.opts = options;
             this.updateListItems();

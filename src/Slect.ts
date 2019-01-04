@@ -163,9 +163,11 @@ class Slect<T extends SlectOption> {
     }
 
     onSelect = (options: (T | SlectOption)[]) => {
-        this.selectedOpts = options;
-        this.config.onSelect(options);
-        this.updateSelectionInView();
+        if (!GeneralUtils.areEqualArrays(this.selectedOpts, options)) {
+            this.selectedOpts = options;
+            this.config.onSelect(options);
+            this.updateSelectionInView();
+        }
     };
 
     validateSelection() {
@@ -202,7 +204,6 @@ class Slect<T extends SlectOption> {
         );
         if (selectedOption) {
             this.onSelect([selectedOption]);
-            this.updateSelectionInView();
         } else if (this.inputEl.value.length > 0) {
             let selectedOpts: SlectOption[] = [];
             if (this.config.allowCustomOption) {
@@ -215,7 +216,6 @@ class Slect<T extends SlectOption> {
                 ];
             }
             this.onSelect(selectedOpts);
-            this.updateSelectionInView();
         } else if (this.inputEl.value.length < 1) {
             this.clearSelectedOptions();
         }

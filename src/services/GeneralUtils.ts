@@ -6,8 +6,8 @@ class GeneralUtils {
             longer = s2;
             shorter = s1;
         }
-        if(!exactMatch) {
-            longer = longer.slice(0, shorter.length)
+        if (!exactMatch) {
+            longer = longer.slice(0, shorter.length);
         }
         let longerLength = longer.length;
         if (longerLength == 0) {
@@ -44,6 +44,14 @@ class GeneralUtils {
             if (i > 0) costs[s2.length] = lastValue;
         }
         return costs[s2.length];
+    }
+
+    static areEqualArrays<T>(array1: T[], array2: T[]): boolean {
+        return (
+            array1.length === array2.length &&
+            typeof array1.find((item, index) => item !== array2[index]) ===
+                'undefined'
+        );
     }
 }
 
