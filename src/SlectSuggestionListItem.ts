@@ -38,8 +38,8 @@ class SlectSuggestionListItem<T extends SlectOption> {
     }
 
     render() {
-        HTMLElementUtils.clearDOM(this.domElement);
         return new Promise<HTMLElement>(resolve => {
+            HTMLElementUtils.clearDOM(this.domElement);
             this.domElement.appendChild(
                 document.createTextNode(this.option.label)
             );

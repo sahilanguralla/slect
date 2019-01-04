@@ -78,9 +78,9 @@ class SlectSuggestionList<T extends SlectOption> {
     };
 
     render(): Promise<HTMLElement> {
-        HTMLElementUtils.clearDOM(this.domElement);
         return Promise.all(this.listItems.map(item => item.render())).then(
             els => {
+                HTMLElementUtils.clearDOM(this.domElement);
                 els.forEach(el => this.domElement.append(el));
                 this.domElement.scrollTo(0, 0);
                 return this.domElement;

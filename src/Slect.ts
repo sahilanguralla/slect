@@ -7,7 +7,15 @@ import HTMLElementUtils from './services/HTMLElementUtils';
 import './assets/less/slect.less';
 
 class Slect<T extends SlectOption> {
-    options: T[];
+    private opts: T[];
+
+    get options(): T[] {
+        return this.opts;
+    }
+    set options(options: T[]) {
+        this.opts = options;
+        this.updateSuggestionList();
+    }
 
     private selectedOpts: (T | SlectOption)[] = [];
     get selectedOptions(): (T | SlectOption)[] {
@@ -59,7 +67,7 @@ class Slect<T extends SlectOption> {
         } else {
             throw new Error('Invalid selector.');
         }
-        this.options = options;
+        this.opts = options;
 
         this.config = Slect.defaultConfig;
         if (config) {
@@ -173,7 +181,7 @@ class Slect<T extends SlectOption> {
     };
 
     onInputKeyUp = () => {
-        this.updateSuggestionList();
+        this.updateSuggestionList(this.inputEl.value);
     };
 
     onInputKeyDown = (event: KeyboardEvent) => {
@@ -183,7 +191,7 @@ class Slect<T extends SlectOption> {
     };
 
     onInputChange = () => {
-        this.updateSuggestionList();
+        this.updateSuggestionList(this.inputEl.value);
     };
 
     onClickClearButton = () => {
@@ -244,8 +252,7 @@ class Slect<T extends SlectOption> {
             .join(', ');
     }
 
-    updateSuggestionList() {
-        const text = this.inputEl.value;
+    updateSuggestionList(text:string = '') {
         let validOptions: T[] = [];
         if (
             this.config.allowViewAllOptions ||
