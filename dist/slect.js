@@ -174,7 +174,7 @@ var Slect = /** @class */ (function () {
             }
         };
         this.onInputKeyUp = function () {
-            _this.updateSuggestionList();
+            _this.updateSuggestionList(_this.inputEl.value);
         };
         this.onInputKeyDown = function (event) {
             if (event.keyCode === 9) {
@@ -182,7 +182,7 @@ var Slect = /** @class */ (function () {
             }
         };
         this.onInputChange = function () {
-            _this.updateSuggestionList();
+            _this.updateSuggestionList(_this.inputEl.value);
         };
         this.onClickClearButton = function () {
             HTMLElementUtils_1.default.removeClass(_this.element, 'slect-selected');
@@ -231,7 +231,7 @@ var Slect = /** @class */ (function () {
         else {
             throw new Error('Invalid selector.');
         }
-        this.options = options;
+        this.opts = options;
         this.config = Slect.defaultConfig;
         if (config) {
             this.config = Object.assign(Slect.defaultConfig, config);
@@ -241,6 +241,17 @@ var Slect = /** @class */ (function () {
         this.suggestionList = new SlectSuggestionList_1.default([]);
         this.init();
     }
+    Object.defineProperty(Slect.prototype, "options", {
+        get: function () {
+            return this.opts;
+        },
+        set: function (options) {
+            this.opts = options;
+            this.updateSuggestionList();
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Slect.prototype, "selectedOptions", {
         get: function () {
             return this.selectedOpts;
@@ -326,8 +337,8 @@ var Slect = /** @class */ (function () {
             .map(function (option) { return option.label; })
             .join(', ');
     };
-    Slect.prototype.updateSuggestionList = function () {
-        var text = this.inputEl.value;
+    Slect.prototype.updateSuggestionList = function (text) {
+        if (text === void 0) { text = ''; }
         var validOptions = [];
         if (this.config.allowViewAllOptions ||
             text.length >= this.config.minTextLengthForSuggestions) {
@@ -361,7 +372,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.8-1-g1adf82b";
+            return "v0.0.9-1-gbf1a5ca";
         },
         enumerable: true,
         configurable: true
@@ -522,8 +533,8 @@ var SlectSuggestionList = /** @class */ (function () {
     };
     SlectSuggestionList.prototype.render = function () {
         var _this = this;
-        HTMLElementUtils_1.default.clearDOM(this.domElement);
         return Promise.all(this.listItems.map(function (item) { return item.render(); })).then(function (els) {
+            HTMLElementUtils_1.default.clearDOM(_this.domElement);
             els.forEach(function (el) { return _this.domElement.append(el); });
             _this.domElement.scrollTo(0, 0);
             return _this.domElement;
@@ -569,8 +580,8 @@ var SlectSuggestionListItem = /** @class */ (function () {
     };
     SlectSuggestionListItem.prototype.render = function () {
         var _this = this;
-        HTMLElementUtils_1.default.clearDOM(this.domElement);
         return new Promise(function (resolve) {
+            HTMLElementUtils_1.default.clearDOM(_this.domElement);
             _this.domElement.appendChild(document.createTextNode(_this.option.label));
             _this.domElement.dataset.optionValue = _this.option.value;
             var tickContainerEl = document.createElement('div');
