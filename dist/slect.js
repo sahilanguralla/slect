@@ -290,6 +290,7 @@ var Slect = /** @class */ (function () {
             _this.updateSuggestionList(_this.inputEl.value);
         };
         this.onFocus = function () {
+            _this.element.scrollIntoView({ behavior: 'smooth' });
             _this.focused = true;
             HTMLElementUtils_1.default.addClass(_this.element, 'focused');
         };
@@ -302,14 +303,16 @@ var Slect = /** @class */ (function () {
                 _this.closeSuggestionList();
             }
         };
+        this.onClickValueElement = function () {
+            _this.focus(true);
+        };
         this.onClickClearButton = function () {
             HTMLElementUtils_1.default.removeClass(_this.element, 'slect-selected');
             _this.clearSelectedOptions();
             _this.closeSuggestionList();
         };
         this.onClickExpandListButton = function () {
-            _this.inputEl.focus();
-            _this.onFocus();
+            _this.focus(!_this.focused);
         };
         if (element instanceof HTMLElement)
             this.element = element;
@@ -328,8 +331,16 @@ var Slect = /** @class */ (function () {
         if (config) {
             this.config = Object.assign(Slect.defaultConfig, config);
         }
+        var valueContainerEl = document.createElement('div');
+        HTMLElementUtils_1.default.addClass(valueContainerEl, 'slect-value-container');
+        this.element.appendChild(valueContainerEl);
+        this.valueElement = document.createElement('div');
+        valueContainerEl.appendChild(this.valueElement);
+        this.valueElement.addEventListener('click', this.onClickValueElement);
+        this.inputContainerEl = document.createElement('div');
+        this.element.appendChild(this.inputContainerEl);
         this.inputEl = document.createElement('input');
-        this.element.appendChild(this.inputEl);
+        this.inputContainerEl.appendChild(this.inputEl);
         this.suggestionList = new SlectSuggestionList_1.default([]);
         this.init();
     }
@@ -360,6 +371,8 @@ var Slect = /** @class */ (function () {
     Slect.prototype.init = function () {
         var _this = this;
         HTMLElementUtils_1.default.addClass(this.element, 'slect');
+        HTMLElementUtils_1.default.addClass(this.valueElement, 'slect-value');
+        HTMLElementUtils_1.default.addClass(this.inputContainerEl, 'slect-input-container');
         HTMLElementUtils_1.default.addClass(this.inputEl, 'slect-input');
         this.inputEl.placeholder = this.config.placeholder;
         this.inputEl.addEventListener('change', this.onInputChange);
@@ -368,8 +381,11 @@ var Slect = /** @class */ (function () {
         this.inputEl.addEventListener('focus', this.onFocus);
         var separator = document.createElement('div');
         HTMLElementUtils_1.default.addClass(separator, 'slect-input-separator');
-        this.element.appendChild(separator);
-        this.suggestionList.render().then(function (el) { return _this.element.appendChild(el); });
+        this.inputContainerEl.appendChild(separator);
+        this.suggestionList
+            .render()
+            .then(function (el) { return _this.inputContainerEl.appendChild(el); });
+        // slect actions start here
         var slectActionsContainer = document.createElement('div');
         HTMLElementUtils_1.default.addClass(slectActionsContainer, 'slect-actions-container');
         var clearContainerEl = document.createElement('div');
@@ -390,6 +406,7 @@ var Slect = /** @class */ (function () {
             this.suggestionList.options = this.options;
         }
         this.element.appendChild(slectActionsContainer);
+        // slect actions ends here
         window.addEventListener('click', this.onClickBody);
         // adding mutation observer if available to remove event listener after element is removed
         if (typeof MutationObserver === 'function' && this.element.parentNode) {
@@ -434,8 +451,21 @@ var Slect = /** @class */ (function () {
         }
         this.suggestionList.selectedOptions = this.selectedOptions;
     };
+    Slect.prototype.focus = function (focused) {
+        var _this = this;
+        if (focused) {
+            this.onFocus();
+            setTimeout(function () {
+                _this.inputEl.focus();
+            });
+        }
+        else {
+            this.inputEl.blur();
+            this.onBlur();
+        }
+        this.focused = focused;
+    };
     Slect.prototype.clearSelectedOptions = function () {
-        this.inputEl.value = '';
         this.selectedOptions = [];
         this.onSelect && this.onSelect(this, []);
         this.updateSuggestionList();
@@ -444,9 +474,11 @@ var Slect = /** @class */ (function () {
         HTMLElementUtils_1.default.removeClass(this.element, 'focused');
     };
     Slect.prototype.updateInput = function () {
-        this.inputEl.value = this.selectedOptions
+        var value = this.selectedOptions
             .map(function (option) { return option.label; })
             .join(', ');
+        this.inputEl.value = value;
+        this.valueElement.innerText = value ? value : this.config.placeholder;
     };
     Slect.prototype.updateSuggestionList = function (text) {
         if (text === void 0) { text = ''; }
@@ -483,7 +515,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.13-3-gb2c9b43";
+            return "v0.0.15-3-g679d69e";
         },
         enumerable: true,
         configurable: true
@@ -583,7 +615,13 @@ var SlectSuggestionList = /** @class */ (function () {
         var _this = this;
         return Promise.all(this.listItems.map(function (item) { return item.render(); })).then(function (els) {
             HTMLElementUtils_1.default.clearDOM(_this.domElement);
-            els.forEach(function (el) { return _this.domElement.append(el); });
+            if (els.length > 0) {
+                els.forEach(function (el) { return _this.domElement.append(el); });
+                HTMLElementUtils_1.default.removeClass(_this.domElement, 'empty-list');
+            }
+            else {
+                HTMLElementUtils_1.default.addClass(_this.domElement, 'empty-list');
+            }
             _this.domElement.scrollTo(0, 0);
             return _this.domElement;
         });
