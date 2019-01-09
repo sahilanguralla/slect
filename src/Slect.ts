@@ -48,9 +48,9 @@ class Slect<T extends SlectOption> {
                 );
         },
         get placeholder(): string {
-            return this.allowCustomOption
-                ? 'Please enter...'
-                : 'Please choose...';
+            return this.allowViewAllOptions
+                ? 'Type or select an option'
+                : 'Please type';
         },
         allowCustomOption: false
     };
@@ -96,6 +96,10 @@ class Slect<T extends SlectOption> {
         this.inputEl.addEventListener('keydown', this.onInputKeyDown);
         this.inputEl.addEventListener('focus', this.onFocus);
 
+        const separator = document.createElement('div');
+        HTMLElementUtils.addClass(separator, 'slect-input-separator');
+        this.element.appendChild(separator);
+
         this.suggestionList.render().then(el => this.element.appendChild(el));
 
         const slectActionsContainer = document.createElement('div');
@@ -125,7 +129,7 @@ class Slect<T extends SlectOption> {
                 'slect-chevron-container'
             );
 
-            chevContainerEl.innerHTML = require('./assets/icons/chevron-down.svg');
+            chevContainerEl.innerHTML = require('./assets/icons/arrow-down.svg');
             slectActionsContainer.appendChild(chevContainerEl);
 
             HTMLElementUtils.addClass(this.element, 'slect-expandable');
