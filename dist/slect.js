@@ -272,6 +272,7 @@ var Slect = /** @class */ (function () {
                     ];
                 }
                 _this.onOptionSelect(selectedOpts);
+                _this.updateInput();
             }
             else if (_this.inputEl.value.length < 1) {
                 _this.clearSelectedOptions();
@@ -517,7 +518,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.16-3-g2e6a743";
+            return "v0.0.18-1-gf38bf6c";
         },
         enumerable: true,
         configurable: true
