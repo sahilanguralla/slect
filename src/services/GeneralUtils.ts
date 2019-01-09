@@ -6,16 +6,35 @@ class GeneralUtils {
             longer = s2;
             shorter = s1;
         }
-        if (!exactMatch) {
-            longer = longer.slice(0, shorter.length);
-        }
         let longerLength = longer.length;
         if (longerLength == 0) {
             return 1.0;
         }
-        return (
-            (longerLength - this.editDistance(longer, shorter)) / longerLength
-        );
+        debugger;
+        let matchScore =
+            (longerLength - this.editDistance(longer, shorter)) / longerLength;
+
+        if (!exactMatch) {
+            const slicedLonger = longer.slice(0, shorter.length);
+            const slicedLongerLength = slicedLonger.length;
+
+            let newMatchScore =
+                ((slicedLongerLength -
+                    this.editDistance(slicedLonger, shorter)) /
+                    slicedLongerLength) *
+                (shorter.length / slicedLonger.length);
+            if (newMatchScore > matchScore) {
+                if (newMatchScore === 1) matchScore = newMatchScore;
+                else {
+                    newMatchScore =
+                        newMatchScore * (slicedLongerLength / longerLength);
+                    matchScore =
+                        matchScore > newMatchScore ? matchScore : newMatchScore;
+                }
+            }
+        }
+
+        return matchScore;
     }
 
     static editDistance(s1: string, s2: string) {
