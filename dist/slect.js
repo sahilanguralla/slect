@@ -258,6 +258,7 @@ var Slect = /** @class */ (function () {
             var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
             if (selectedOption) {
                 _this.onOptionSelect([selectedOption]);
+                _this.updateInput();
             }
             else if (_this.inputEl.value.length > 0) {
                 var selectedOpts = [];
@@ -278,7 +279,10 @@ var Slect = /** @class */ (function () {
             _this.updateSuggestionList(newValue);
         };
         this.onInputKeyDown = function (event) {
-            if (event.keyCode === 9) {
+            if (event.keyCode === 9 || event.keyCode === 27) {
+                if (event.keyCode === 27) {
+                    _this.inputEl.blur();
+                }
                 _this.onBlur();
             }
         };
@@ -479,7 +483,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.13-1-g9b71285";
+            return "v0.0.13-3-gb2c9b43";
         },
         enumerable: true,
         configurable: true
