@@ -75,19 +75,11 @@ class Slect<T extends SlectOption> {
             this.config = Object.assign(Slect.defaultConfig, config);
         }
 
-        const valueContainerEl = document.createElement('div');
-        HTMLElementUtils.addClass(valueContainerEl, 'slect-value-container');
-        this.element.appendChild(valueContainerEl);
-
         this.valueElement = document.createElement('div');
-        valueContainerEl.appendChild(this.valueElement);
-        this.valueElement.addEventListener('click', this.onClickValueElement);
 
         this.inputContainerEl = document.createElement('div');
-        this.element.appendChild(this.inputContainerEl);
 
         this.inputEl = document.createElement('input');
-        this.inputContainerEl.appendChild(this.inputEl);
 
         this.suggestionList = new SlectSuggestionList<T>([]);
 
@@ -95,13 +87,26 @@ class Slect<T extends SlectOption> {
     }
 
     init() {
+        HTMLElementUtils.clearDOM(this.element);
         HTMLElementUtils.addClass(this.element, 'slect');
         HTMLElementUtils.addClass(this.valueElement, 'slect-value');
+
+        const valueContainerEl = document.createElement('div');
+        HTMLElementUtils.addClass(valueContainerEl, 'slect-value-container');
+        this.element.appendChild(valueContainerEl);
+
+        this.valueElement.innerText = this.config.placeholder;
+        this.valueElement.addEventListener('click', this.onClickValueElement);
+        valueContainerEl.appendChild(this.valueElement);
+
         HTMLElementUtils.addClass(
             this.inputContainerEl,
             'slect-input-container'
         );
+        this.element.appendChild(this.inputContainerEl);
+
         HTMLElementUtils.addClass(this.inputEl, 'slect-input');
+        this.inputContainerEl.appendChild(this.inputEl);
 
         this.inputEl.placeholder = this.config.placeholder;
         this.inputEl.addEventListener('change', this.onInputChange);
