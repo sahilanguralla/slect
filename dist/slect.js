@@ -155,7 +155,6 @@ var GeneralUtils = /** @class */ (function () {
         if (longerLength == 0) {
             return 1.0;
         }
-        debugger;
         var matchScore = (longerLength - this.editDistance(longer, shorter)) / longerLength;
         if (!exactMatch) {
             var slicedLonger = longer.slice(0, shorter.length);
@@ -239,10 +238,10 @@ var Slect = /** @class */ (function () {
         var _this = this;
         this.selectedOpts = [];
         this.focused = false;
-        this.onSelect = function (options) {
+        this.onOptionSelect = function (options) {
             if (!GeneralUtils_1.default.areEqualArrays(_this.selectedOpts, options)) {
                 _this.selectedOpts = options;
-                _this.config.onSelect(options);
+                _this.onSelect && _this.onSelect(_this, options);
                 _this.updateSelectionInView();
             }
         };
@@ -258,7 +257,7 @@ var Slect = /** @class */ (function () {
             var newValue = _this.inputEl.value;
             var selectedOption = _this.options.find(function (option) { return option.label.toLowerCase() === newValue.toLowerCase(); });
             if (selectedOption) {
-                _this.onSelect([selectedOption]);
+                _this.onOptionSelect([selectedOption]);
             }
             else if (_this.inputEl.value.length > 0) {
                 var selectedOpts = [];
@@ -271,7 +270,7 @@ var Slect = /** @class */ (function () {
                         }
                     ];
                 }
-                _this.onSelect(selectedOpts);
+                _this.onOptionSelect(selectedOpts);
             }
             else if (_this.inputEl.value.length < 1) {
                 _this.clearSelectedOptions();
@@ -407,7 +406,7 @@ var Slect = /** @class */ (function () {
             });
         }
         this.suggestionList.onSelect = function (options) {
-            _this.onSelect(options);
+            _this.onOptionSelect(options);
             _this.updateInput();
             _this.updateSelectionInView();
             _this.closeSuggestionList();
@@ -434,7 +433,7 @@ var Slect = /** @class */ (function () {
     Slect.prototype.clearSelectedOptions = function () {
         this.inputEl.value = '';
         this.selectedOptions = [];
-        this.config.onSelect([]);
+        this.onSelect && this.onSelect(this, []);
         this.updateSuggestionList();
     };
     Slect.prototype.closeSuggestionList = function () {
@@ -480,7 +479,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.12-2-g2265f1d";
+            return "v0.0.13-1-g9b71285";
         },
         enumerable: true,
         configurable: true
@@ -489,11 +488,6 @@ var Slect = /** @class */ (function () {
         minTextLengthForSuggestions: 3,
         maxSuggestions: 0,
         allowViewAllOptions: true,
-        onSelect: function (options) {
-            console &&
-                console.info &&
-                console.info('onSelect is not handled. You can do the same by passing via config', options);
-        },
         get placeholder() {
             return this.allowViewAllOptions
                 ? 'Type or select an option'
