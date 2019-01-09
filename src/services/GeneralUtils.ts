@@ -10,7 +10,6 @@ class GeneralUtils {
         if (longerLength == 0) {
             return 1.0;
         }
-        debugger;
         let matchScore =
             (longerLength - this.editDistance(longer, shorter)) / longerLength;
 

@@ -39,14 +39,6 @@ class Slect<T extends SlectOption> {
         minTextLengthForSuggestions: 3,
         maxSuggestions: 0,
         allowViewAllOptions: true,
-        onSelect: (options: SlectOption[]) => {
-            console &&
-                console.info &&
-                console.info(
-                    'onSelect is not handled. You can do the same by passing via config',
-                    options
-                );
-        },
         get placeholder(): string {
             return this.allowViewAllOptions
                 ? 'Type or select an option'
@@ -55,6 +47,9 @@ class Slect<T extends SlectOption> {
         allowCustomOption: false
     };
 
+    onSelect:
+        | ((instance: Slect<T>, options: (SlectOption | T)[]) => void)
+        | undefined;
     focused: boolean = false;
 
     constructor(
@@ -159,17 +154,17 @@ class Slect<T extends SlectOption> {
         }
 
         this.suggestionList.onSelect = options => {
-            this.onSelect(options);
+            this.onOptionSelect(options);
             this.updateInput();
             this.updateSelectionInView();
             this.closeSuggestionList();
         };
     }
 
-    onSelect = (options: (T | SlectOption)[]) => {
+    onOptionSelect = (options: (T | SlectOption)[]) => {
         if (!GeneralUtils.areEqualArrays(this.selectedOpts, options)) {
             this.selectedOpts = options;
-            this.config.onSelect(options);
+            this.onSelect && this.onSelect(this, options);
             this.updateSelectionInView();
         }
     };
@@ -207,7 +202,7 @@ class Slect<T extends SlectOption> {
             option => option.label.toLowerCase() === newValue.toLowerCase()
         );
         if (selectedOption) {
-            this.onSelect([selectedOption]);
+            this.onOptionSelect([selectedOption]);
         } else if (this.inputEl.value.length > 0) {
             let selectedOpts: SlectOption[] = [];
             if (this.config.allowCustomOption) {
@@ -219,7 +214,7 @@ class Slect<T extends SlectOption> {
                     }
                 ];
             }
-            this.onSelect(selectedOpts);
+            this.onOptionSelect(selectedOpts);
         } else if (this.inputEl.value.length < 1) {
             this.clearSelectedOptions();
         }
@@ -268,7 +263,7 @@ class Slect<T extends SlectOption> {
     clearSelectedOptions() {
         this.inputEl.value = '';
         this.selectedOptions = [];
-        this.config.onSelect([]);
+        this.onSelect && this.onSelect(this, []);
         this.updateSuggestionList();
     }
 

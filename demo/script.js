@@ -40,5 +40,8 @@ window.addEventListener('load', () => {
     const slect = new Slect('#select-list-1', options, {
         // allowViewAllOptions: false
     });
+    slect.onSelect = (instance, options) => {
+        console.log(instance, options);
+    };
     slect.selectedOptions = [options[0]];
 });
