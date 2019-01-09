@@ -39,7 +39,8 @@ window.addEventListener('load', () => {
         dropdownEl.className = 'select-list';
         document.body.appendChild(dropdownEl);
         const slect = new Slect(dropdownEl, options, {
-            // allowViewAllOptions: false
+            // allowViewAllOptions: false,
+            allowCustomOption: true
         });
         slect.onSelect = (instance, options) => {
             console.log(instance, options);

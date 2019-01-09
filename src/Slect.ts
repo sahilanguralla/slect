@@ -243,6 +243,7 @@ class Slect<T extends SlectOption> {
                 ];
             }
             this.onOptionSelect(selectedOpts);
+            this.updateInput();
         } else if (this.inputEl.value.length < 1) {
             this.clearSelectedOptions();
         }
