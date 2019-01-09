@@ -331,16 +331,9 @@ var Slect = /** @class */ (function () {
         if (config) {
             this.config = Object.assign(Slect.defaultConfig, config);
         }
-        var valueContainerEl = document.createElement('div');
-        HTMLElementUtils_1.default.addClass(valueContainerEl, 'slect-value-container');
-        this.element.appendChild(valueContainerEl);
         this.valueElement = document.createElement('div');
-        valueContainerEl.appendChild(this.valueElement);
-        this.valueElement.addEventListener('click', this.onClickValueElement);
         this.inputContainerEl = document.createElement('div');
-        this.element.appendChild(this.inputContainerEl);
         this.inputEl = document.createElement('input');
-        this.inputContainerEl.appendChild(this.inputEl);
         this.suggestionList = new SlectSuggestionList_1.default([]);
         this.init();
     }
@@ -370,10 +363,19 @@ var Slect = /** @class */ (function () {
     });
     Slect.prototype.init = function () {
         var _this = this;
+        HTMLElementUtils_1.default.clearDOM(this.element);
         HTMLElementUtils_1.default.addClass(this.element, 'slect');
         HTMLElementUtils_1.default.addClass(this.valueElement, 'slect-value');
+        var valueContainerEl = document.createElement('div');
+        HTMLElementUtils_1.default.addClass(valueContainerEl, 'slect-value-container');
+        this.element.appendChild(valueContainerEl);
+        this.valueElement.innerText = this.config.placeholder;
+        this.valueElement.addEventListener('click', this.onClickValueElement);
+        valueContainerEl.appendChild(this.valueElement);
         HTMLElementUtils_1.default.addClass(this.inputContainerEl, 'slect-input-container');
+        this.element.appendChild(this.inputContainerEl);
         HTMLElementUtils_1.default.addClass(this.inputEl, 'slect-input');
+        this.inputContainerEl.appendChild(this.inputEl);
         this.inputEl.placeholder = this.config.placeholder;
         this.inputEl.addEventListener('change', this.onInputChange);
         this.inputEl.addEventListener('keyup', this.onInputKeyUp);
@@ -515,7 +517,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.16-1-g91bdc8e";
+            return "v0.0.16-3-g2e6a743";
         },
         enumerable: true,
         configurable: true
