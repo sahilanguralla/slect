@@ -10,9 +10,7 @@ class SlectSuggestionList<T extends SlectOption> {
         return this.opts;
     }
     set options(options: T[]) {
-        if (
-            !GeneralUtils.areEqualArrays(this.opts, options)
-        ) {
+        if (!GeneralUtils.areEqualArrays(this.opts, options)) {
             this.opts = options;
             this.updateListItems();
             this.render();
@@ -81,7 +79,12 @@ class SlectSuggestionList<T extends SlectOption> {
         return Promise.all(this.listItems.map(item => item.render())).then(
             els => {
                 HTMLElementUtils.clearDOM(this.domElement);
-                els.forEach(el => this.domElement.append(el));
+                if (els.length > 0) {
+                    els.forEach(el => this.domElement.append(el));
+                    HTMLElementUtils.removeClass(this.domElement, 'empty-list');
+                } else {
+                    HTMLElementUtils.addClass(this.domElement, 'empty-list');
+                }
                 this.domElement.scrollTo(0, 0);
                 return this.domElement;
             }

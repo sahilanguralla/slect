@@ -30,6 +30,8 @@ class Slect<T extends SlectOption> {
 
     private config: SlectConfig<T>;
 
+    private readonly valueElement: HTMLElement;
+    private readonly inputContainerEl: HTMLElement;
     private readonly inputEl: HTMLInputElement;
     private readonly suggestionList: SlectSuggestionList<T>;
 
@@ -50,7 +52,7 @@ class Slect<T extends SlectOption> {
     onSelect:
         | ((instance: Slect<T>, options: (SlectOption | T)[]) => void)
         | undefined;
-    focused: boolean = false;
+    private focused: boolean = false;
 
     constructor(
         element: HTMLElement | string,
@@ -73,8 +75,19 @@ class Slect<T extends SlectOption> {
             this.config = Object.assign(Slect.defaultConfig, config);
         }
 
+        const valueContainerEl = document.createElement('div');
+        HTMLElementUtils.addClass(valueContainerEl, 'slect-value-container');
+        this.element.appendChild(valueContainerEl);
+
+        this.valueElement = document.createElement('div');
+        valueContainerEl.appendChild(this.valueElement);
+        this.valueElement.addEventListener('click', this.onClickValueElement);
+
+        this.inputContainerEl = document.createElement('div');
+        this.element.appendChild(this.inputContainerEl);
+
         this.inputEl = document.createElement('input');
-        this.element.appendChild(this.inputEl);
+        this.inputContainerEl.appendChild(this.inputEl);
 
         this.suggestionList = new SlectSuggestionList<T>([]);
 
@@ -83,6 +96,11 @@ class Slect<T extends SlectOption> {
 
     init() {
         HTMLElementUtils.addClass(this.element, 'slect');
+        HTMLElementUtils.addClass(this.valueElement, 'slect-value');
+        HTMLElementUtils.addClass(
+            this.inputContainerEl,
+            'slect-input-container'
+        );
         HTMLElementUtils.addClass(this.inputEl, 'slect-input');
 
         this.inputEl.placeholder = this.config.placeholder;
@@ -93,10 +111,13 @@ class Slect<T extends SlectOption> {
 
         const separator = document.createElement('div');
         HTMLElementUtils.addClass(separator, 'slect-input-separator');
-        this.element.appendChild(separator);
+        this.inputContainerEl.appendChild(separator);
 
-        this.suggestionList.render().then(el => this.element.appendChild(el));
+        this.suggestionList
+            .render()
+            .then(el => this.inputContainerEl.appendChild(el));
 
+        // slect actions start here
         const slectActionsContainer = document.createElement('div');
         HTMLElementUtils.addClass(
             slectActionsContainer,
@@ -132,6 +153,7 @@ class Slect<T extends SlectOption> {
         }
 
         this.element.appendChild(slectActionsContainer);
+        // slect actions ends here
 
         window.addEventListener('click', this.onClickBody);
 
@@ -237,6 +259,7 @@ class Slect<T extends SlectOption> {
     };
 
     onFocus = () => {
+        this.element.scrollIntoView({ behavior: 'smooth' });
         this.focused = true;
         HTMLElementUtils.addClass(this.element, 'focused');
     };
@@ -252,6 +275,10 @@ class Slect<T extends SlectOption> {
         }
     };
 
+    onClickValueElement = () => {
+        this.focus(true);
+    };
+
     onClickClearButton = () => {
         HTMLElementUtils.removeClass(this.element, 'slect-selected');
 
@@ -260,17 +287,23 @@ class Slect<T extends SlectOption> {
     };
 
     onClickExpandListButton = () => {
-        if (this.focused) {
-            this.inputEl.blur();
-            this.onBlur();
-        } else {
-            this.inputEl.focus();
-            this.onFocus();
-        }
+        this.focus(!this.focused);
     };
 
+    focus(focused: boolean) {
+        if (focused) {
+            this.onFocus();
+            setTimeout(() => {
+                this.inputEl.focus();
+            });
+        } else {
+            this.inputEl.blur();
+            this.onBlur();
+        }
+        this.focused = focused;
+    }
+
     clearSelectedOptions() {
-        this.inputEl.value = '';
         this.selectedOptions = [];
         this.onSelect && this.onSelect(this, []);
         this.updateSuggestionList();
@@ -281,9 +314,11 @@ class Slect<T extends SlectOption> {
     }
 
     updateInput() {
-        this.inputEl.value = this.selectedOptions
+        const value = this.selectedOptions
             .map(option => option.label)
             .join(', ');
+        this.inputEl.value = value;
+        this.valueElement.innerText = value ? value : this.config.placeholder;
     }
 
     updateSuggestionList(text: string = '') {

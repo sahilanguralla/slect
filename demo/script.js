@@ -1,5 +1,5 @@
 window.addEventListener('load', () => {
-    let options = [
+    var options = [
         {
             label: 'Apple',
             value: 'apple'
@@ -34,14 +34,16 @@ window.addEventListener('load', () => {
         }
     ];
 
-    /**
-     * @type {Slect}
-     */
-    const slect = new Slect('#select-list-1', options, {
-        // allowViewAllOptions: false
-    });
-    slect.onSelect = (instance, options) => {
-        console.log(instance, options);
-    };
-    slect.selectedOptions = [options[0]];
+    for (var i = 0; i < 20; i++) {
+        var dropdownEl = document.createElement('div');
+        dropdownEl.className = 'select-list';
+        document.body.appendChild(dropdownEl);
+        const slect = new Slect(dropdownEl, options, {
+            // allowViewAllOptions: false
+        });
+        slect.onSelect = (instance, options) => {
+            console.log(instance, options);
+        };
+        slect.selectedOptions = [options[0]];
+    }
 });

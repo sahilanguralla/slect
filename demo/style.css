@@ -2,8 +2,12 @@
     box-sizing: border-box;
 }
 
-#select-list-1 {
+.select-list {
     position: relative;
     height: 45px;
-    width: 200px;
+    width: 250px;
+    margin-top: 20px;
+}
+.select-list .slect-input {
+    height: 45px;
 }
