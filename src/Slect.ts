@@ -260,8 +260,13 @@ class Slect<T extends SlectOption> {
     };
 
     onClickExpandListButton = () => {
-        this.inputEl.focus();
-        this.onFocus();
+        if (this.focused) {
+            this.inputEl.blur();
+            this.onBlur();
+        } else {
+            this.inputEl.focus();
+            this.onFocus();
+        }
     };
 
     clearSelectedOptions() {
