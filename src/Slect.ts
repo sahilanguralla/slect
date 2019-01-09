@@ -203,6 +203,7 @@ class Slect<T extends SlectOption> {
         );
         if (selectedOption) {
             this.onOptionSelect([selectedOption]);
+            this.updateInput();
         } else if (this.inputEl.value.length > 0) {
             let selectedOpts: SlectOption[] = [];
             if (this.config.allowCustomOption) {
@@ -223,7 +224,10 @@ class Slect<T extends SlectOption> {
     };
 
     onInputKeyDown = (event: KeyboardEvent) => {
-        if (event.keyCode === 9) {
+        if (event.keyCode === 9 || event.keyCode === 27) {
+            if (event.keyCode === 27) {
+                this.inputEl.blur();
+            }
             this.onBlur();
         }
     };
