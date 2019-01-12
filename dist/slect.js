@@ -518,7 +518,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.18-1-gf38bf6c";
+            return "v0.0.19";
         },
         enumerable: true,
         configurable: true

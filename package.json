@@ -7,7 +7,7 @@
     "scripts": {
         "lint": "lint-staged",
         "dev": "webpack-dev-server --config webpack/webpack.dev.config.js --color --progress",
-        "build": "webpack --config webpack/webpack.prod.config.js --color --progress"
+        "build": "rm -rf ./lib && tsc --declaration --outDir ./lib --sourceMap false && cp -r ./src/assets lib/assets && webpack --config webpack/webpack.prod.config.js --color --progress"
     },
     "pre-commit": [
         "lint"
@@ -24,8 +24,8 @@
             ]
         }
     },
-    "main": "dist/slect.min.js",
-    "typings": "dist/slect.min.d.ts",
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
     "devDependencies": {
         "@types/webpack-env": "^1.13.6",
         "acorn": "^6.0.2",
