@@ -1,6 +1,6 @@
 import SlectOption from './SlectOption';
 import HTMLElementUtils from './services/HTMLElementUtils';
-import tickIcon from './assets/icons/tickIcon';
+import tickIcon from './icons/tickIcon';
 
 class SlectSuggestionListItem<T extends SlectOption> {
     option: T;

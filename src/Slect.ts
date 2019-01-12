@@ -5,8 +5,8 @@ import SlectSuggestionList from './SlectSuggestionList';
 import HTMLElementUtils from './services/HTMLElementUtils';
 
 import './assets/less/slect.less';
-import cancelIcon from './assets/icons/cancelIcon';
-import arrowDownIcon from './assets/icons/arrowDownIcon';
+import cancelIcon from './icons/cancelIcon';
+import arrowDownIcon from './icons/arrowDownIcon';
 
 class Slect<T extends SlectOption> {
     private opts: (T | SlectOption)[];
