@@ -520,7 +520,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.21-2-g59b0d0c";
+            return "v0.0.22-1-gc0fb3ee";
         },
         enumerable: true,
         configurable: true
