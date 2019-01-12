@@ -5,6 +5,10 @@
   font-family: sans-serif;
   background: rgba(77, 137, 255, 0.08);
 }
+.slect svg {
+  width: 100%;
+  height: 100%;
+}
 .slect.slect-expandable .slect-chevron-container {
   display: inline-block;
 }
@@ -106,8 +110,6 @@
   height: 15px;
 }
 .slect-actions-container svg {
-  width: 100%;
-  height: 100%;
   fill: #4a85ff;
 }
 .slect-clear-container,
