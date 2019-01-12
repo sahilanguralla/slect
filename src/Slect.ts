@@ -5,6 +5,8 @@ import SlectSuggestionList from './SlectSuggestionList';
 import HTMLElementUtils from './services/HTMLElementUtils';
 
 import './assets/less/slect.less';
+import cancelIcon from './assets/icons/cancelIcon';
+import arrowDownIcon from './assets/icons/arrowDownIcon';
 
 class Slect<T extends SlectOption> {
     private opts: (T | SlectOption)[];
@@ -131,7 +133,7 @@ class Slect<T extends SlectOption> {
 
         const clearContainerEl = document.createElement('div');
         HTMLElementUtils.addClass(clearContainerEl, 'slect-clear-container');
-        clearContainerEl.innerHTML = require('./assets/icons/cancel.svg');
+        clearContainerEl.innerHTML = cancelIcon;
         clearContainerEl.addEventListener('click', this.onClickClearButton);
         slectActionsContainer.appendChild(clearContainerEl);
 
@@ -150,7 +152,7 @@ class Slect<T extends SlectOption> {
                 'slect-chevron-container'
             );
 
-            chevContainerEl.innerHTML = require('./assets/icons/arrow-down.svg');
+            chevContainerEl.innerHTML = arrowDownIcon;
             slectActionsContainer.appendChild(chevContainerEl);
 
             HTMLElementUtils.addClass(this.element, 'slect-expandable');
