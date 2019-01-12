@@ -233,6 +233,8 @@ var GeneralUtils_1 = __webpack_require__(1);
 var SlectSuggestionList_1 = __webpack_require__(4);
 var HTMLElementUtils_1 = __webpack_require__(0);
 __webpack_require__(7);
+var cancelIcon_1 = __webpack_require__(8);
+var arrowDownIcon_1 = __webpack_require__(9);
 var Slect = /** @class */ (function () {
     function Slect(element, options, config) {
         var _this = this;
@@ -393,7 +395,7 @@ var Slect = /** @class */ (function () {
         HTMLElementUtils_1.default.addClass(slectActionsContainer, 'slect-actions-container');
         var clearContainerEl = document.createElement('div');
         HTMLElementUtils_1.default.addClass(clearContainerEl, 'slect-clear-container');
-        clearContainerEl.innerHTML = __webpack_require__(8);
+        clearContainerEl.innerHTML = cancelIcon_1.default;
         clearContainerEl.addEventListener('click', this.onClickClearButton);
         slectActionsContainer.appendChild(clearContainerEl);
         if (this.config.allowViewAllOptions) {
@@ -403,7 +405,7 @@ var Slect = /** @class */ (function () {
             var chevContainerEl = document.createElement('div');
             chevContainerEl.addEventListener('click', this.onClickExpandListButton);
             HTMLElementUtils_1.default.addClass(chevContainerEl, 'slect-chevron-container');
-            chevContainerEl.innerHTML = __webpack_require__(9);
+            chevContainerEl.innerHTML = arrowDownIcon_1.default;
             slectActionsContainer.appendChild(chevContainerEl);
             HTMLElementUtils_1.default.addClass(this.element, 'slect-expandable');
             this.suggestionList.options = this.options;
@@ -518,7 +520,7 @@ var Slect = /** @class */ (function () {
     };
     Object.defineProperty(Slect, "version", {
         get: function () {
-            return "v0.0.19-1-g3b5730d";
+            return "v0.0.20-1-gf13bb90";
         },
         enumerable: true,
         configurable: true
@@ -642,6 +644,7 @@ exports.default = SlectSuggestionList;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTMLElementUtils_1 = __webpack_require__(0);
+var tickIcon_1 = __webpack_require__(6);
 var SlectSuggestionListItem = /** @class */ (function () {
     function SlectSuggestionListItem(option) {
         this.selected = false;
@@ -675,7 +678,7 @@ var SlectSuggestionListItem = /** @class */ (function () {
             _this.domElement.dataset.optionValue = _this.option.value;
             var tickContainerEl = document.createElement('div');
             HTMLElementUtils_1.default.addClass(tickContainerEl, 'slect-checkmark-container');
-            tickContainerEl.innerHTML = __webpack_require__(6);
+            tickContainerEl.innerHTML = tickIcon_1.default;
             _this.domElement.appendChild(tickContainerEl);
             _this.select(_this.selected);
             resolve(_this.domElement);
@@ -688,9 +691,14 @@ exports.default = SlectSuggestionListItem;
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 512 512;\" xml:space=\"preserve\"><g><g><path d=\"M504.502,75.496c-9.997-9.998-26.205-9.998-36.204,0L161.594,382.203L43.702,264.311c-9.997-9.998-26.205-9.997-36.204,0 c-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.502,111.7 C514.5,101.703,514.499,85.494,504.502,75.496z\" fill=\"#006DF0\"></path></g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>"
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tickIcon = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 512 512\" style=\"enable-background:0 0 512 512;\" xml:space=\"preserve\" width=\"512px\" height=\"512px\">\n<g>\n\t<g>\n\t\t<path d=\"M504.502,75.496c-9.997-9.998-26.205-9.998-36.204,0L161.594,382.203L43.702,264.311c-9.997-9.998-26.205-9.997-36.204,0    c-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.502,111.7    C514.5,101.703,514.499,85.494,504.502,75.496z\" fill=\"#006DF0\"/>\n\t</g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n<g>\n</g>\n</svg>";
+exports.default = tickIcon;
+
 
 /***/ }),
 /* 7 */
@@ -700,15 +708,25 @@ module.exports = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http:/
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<svg viewBox=\"0 0 20 20\" aria-hidden=\"true\" focusable=\"false\" class=\"css-19bqh2r\"><path d=\"M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z\"></path></svg>"
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var cancelIcon = "<?xml version='1.0' encoding='utf-8'?>\n<svg height=\"20\" width=\"20\" viewBox=\"0 0 20 20\" aria-hidden=\"true\" focusable=\"false\" class=\"css-19bqh2r\"><path d=\"M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z\"></path></svg>";
+exports.default = cancelIcon;
+
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 292.362 292.362\" style=\"enable-background:new 0 0 292.362 292.362;\" xml:space=\"preserve\"><g><path d=\"M286.935,69.377c-3.614-3.617-7.898-5.424-12.848-5.424H18.274c-4.952,0-9.233,1.807-12.85,5.424 C1.807,72.998,0,77.279,0,82.228c0,4.948,1.807,9.229,5.424,12.847l127.907,127.907c3.621,3.617,7.902,5.428,12.85,5.428 s9.233-1.811,12.847-5.428L286.935,95.074c3.613-3.617,5.427-7.898,5.427-12.847C292.362,77.279,290.548,72.998,286.935,69.377z\"></path></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>"
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var arrowDownIcon = "<?xml version='1.0' encoding='utf-8'?>\n<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n     width=\"292.362px\" height=\"292.362px\" viewBox=\"0 0 292.362 292.362\" style=\"enable-background:new 0 0 292.362 292.362;\"\n     xml:space=\"preserve\">\n<g>\n\t<path d=\"M286.935,69.377c-3.614-3.617-7.898-5.424-12.848-5.424H18.274c-4.952,0-9.233,1.807-12.85,5.424\n\t\tC1.807,72.998,0,77.279,0,82.228c0,4.948,1.807,9.229,5.424,12.847l127.907,127.907c3.621,3.617,7.902,5.428,12.85,5.428\n\t\ts9.233-1.811,12.847-5.428L286.935,95.074c3.613-3.617,5.427-7.898,5.427-12.847C292.362,77.279,290.548,72.998,286.935,69.377z\"/>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n    <g>\n</g>\n</svg>";
+exports.default = arrowDownIcon;
+
 
 /***/ })
 /******/ ])["default"];
