@@ -15,7 +15,7 @@ class Slect<T extends SlectOption> {
         return this.opts;
     }
     set options(options: (T | SlectOption)[]) {
-        this.opts = options;
+        this.opts = options.filter(option => option && typeof option.label === 'string');
         this.updateSuggestionList();
         this.validateSelection();
     }
@@ -70,7 +70,7 @@ class Slect<T extends SlectOption> {
         } else {
             throw new Error('Invalid selector.');
         }
-        this.opts = options;
+        this.opts = options.filter(option => option && typeof option.label === 'string');
 
         this.config = Slect.defaultConfig;
         if (config) {
