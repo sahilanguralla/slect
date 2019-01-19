@@ -7,7 +7,7 @@
     "scripts": {
         "lint": "lint-staged",
         "dev": "webpack-dev-server --config webpack/webpack.dev.config.js --color --progress",
-        "build": "rm -rf ./lib && tsc --declaration --outDir ./lib --sourceMap false && cp -r ./src/assets lib/assets && webpack --config webpack/webpack.prod.config.js --color --progress"
+        "prepublish": "rm -rf ./lib && tsc --declaration --outDir ./lib --sourceMap false && cp -r ./src/assets lib/assets && webpack --config webpack/webpack.prod.config.js --color --progress"
     },
     "pre-commit": [
         "lint"
