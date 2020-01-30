@@ -1,11 +1,10 @@
 const path = require('path');
 const merge = require('webpack-merge');
-const baseConfig = require('./webpack.config.js');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-    .BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const baseConfig = require('./webpack.config.js');
 
 const args = process.argv.slice(2);
 
@@ -28,12 +27,12 @@ const config = merge(baseConfig, {
         overlay: true
     },
     plugins: [
-        new CopyWebpackPlugin([{ from: `./demo/**/*`, to: `./`, flatten: true }]),
+        new CopyWebpackPlugin([
+            { from: `./demo/**/*`, to: `./`, flatten: true }
+        ]),
         new HTMLWebpackPlugin({
             template: `./demo/demo.html`,
-            filename: './index.html',
-            favicon: './favicon.png',
-            chunks: ['slect.min']
+            filename: './index.html'
         })
     ]
 });

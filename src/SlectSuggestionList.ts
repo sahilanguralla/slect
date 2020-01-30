@@ -9,6 +9,7 @@ class SlectSuggestionList<T extends SlectOption> {
     get options(): T[] {
         return this.opts;
     }
+
     set options(options: T[]) {
         if (!GeneralUtils.areEqualArrays(this.opts, options)) {
             this.opts = options;
@@ -20,9 +21,11 @@ class SlectSuggestionList<T extends SlectOption> {
     private listItems: SlectSuggestionListItem<T>[] = [];
 
     private selectedItems: SlectSuggestionListItem<T>[] = [];
+
     get selectedOptions() {
         return this.selectedItems.map(item => item.option);
     }
+
     set selectedOptions(options: SlectOption[]) {
         this.selectedItems = this.listItems.reduce(
             (
@@ -71,7 +74,7 @@ class SlectSuggestionList<T extends SlectOption> {
         item.select(true);
         this.selectedItems = [item];
         if (typeof this.onSelect === 'function') {
-            this.onSelect(this.selectedItems.map(item => item.option));
+            this.onSelect(this.selectedItems.map(i => i.option));
         }
     };
 

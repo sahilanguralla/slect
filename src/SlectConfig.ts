@@ -1,6 +1,4 @@
-import SlectOption from './SlectOption';
-
-interface SlectConfig<T extends SlectOption> {
+interface SlectConfig {
     allowViewAllOptions: boolean;
     maxSuggestions: number;
     minTextLengthForSuggestions: number;

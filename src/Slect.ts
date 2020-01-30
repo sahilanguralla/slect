@@ -4,7 +4,6 @@ import GeneralUtils from './services/GeneralUtils';
 import SlectSuggestionList from './SlectSuggestionList';
 import HTMLElementUtils from './services/HTMLElementUtils';
 
-import './assets/less/slect.less';
 import cancelIcon from './icons/cancelIcon';
 import arrowDownIcon from './icons/arrowDownIcon';
 
@@ -14,32 +13,40 @@ class Slect<T extends SlectOption> {
     get options(): (T | SlectOption)[] {
         return this.opts;
     }
+
     set options(options: (T | SlectOption)[]) {
-        this.opts = options.filter(option => option && typeof option.label === 'string');
+        this.opts = options.filter(
+            option => option && typeof option.label === 'string'
+        );
         this.updateSuggestionList();
         this.validateSelection();
     }
 
     private selectedOpts: (T | SlectOption)[] = [];
+
     get selectedOptions(): (T | SlectOption)[] {
         return this.selectedOpts;
     }
+
     set selectedOptions(options: (T | SlectOption)[]) {
         this.selectedOpts = options;
         this.updateInput();
         this.updateSelectionInView();
     }
 
-    private config: SlectConfig<T>;
+    private config: SlectConfig;
 
     private readonly valueElement: HTMLElement;
+
     private readonly inputContainerEl: HTMLElement;
+
     private readonly inputEl: HTMLInputElement;
+
     private readonly suggestionList: SlectSuggestionList<T>;
 
     private readonly element: HTMLElement;
 
-    static readonly defaultConfig: SlectConfig<SlectOption> = {
+    static readonly defaultConfig: SlectConfig = {
         minTextLengthForSuggestions: 3,
         maxSuggestions: 0,
         allowViewAllOptions: true,
@@ -54,12 +61,13 @@ class Slect<T extends SlectOption> {
     onSelect:
         | ((instance: Slect<T>, options: (SlectOption | T)[]) => void)
         | undefined;
+
     private focused: boolean = false;
 
     constructor(
         element: HTMLElement | string,
         options: T[],
-        config?: Partial<SlectConfig<T>>
+        config?: Partial<SlectConfig>
     ) {
         if (element instanceof HTMLElement) this.element = element;
         else if (typeof element === 'string') {
@@ -70,7 +78,9 @@ class Slect<T extends SlectOption> {
         } else {
             throw new Error('Invalid selector.');
         }
-        this.opts = options.filter(option => option && typeof option.label === 'string');
+        this.opts = options.filter(
+            option => option && typeof option.label === 'string'
+        );
 
         this.config = Slect.defaultConfig;
         if (config) {
@@ -193,7 +203,7 @@ class Slect<T extends SlectOption> {
     onOptionSelect = (options: (T | SlectOption)[]) => {
         if (!GeneralUtils.areEqualArrays(this.selectedOpts, options)) {
             this.selectedOpts = options;
-            this.onSelect && this.onSelect(this, options);
+            if (this.onSelect) this.onSelect(this, options);
             this.updateSelectionInView();
         }
     };
@@ -219,8 +229,7 @@ class Slect<T extends SlectOption> {
 
     onClickBody = (event: Event) => {
         const target = event.target || event.srcElement || event.currentTarget;
-        if (target instanceof Node && this.element.contains(target)) {
-        } else {
+        if (!(target instanceof Node && this.element.contains(target))) {
             this.onBlur();
         }
     };
@@ -267,7 +276,6 @@ class Slect<T extends SlectOption> {
     };
 
     onFocus = () => {
-        this.element.scrollIntoView({ behavior: 'smooth' });
         this.focused = true;
         HTMLElementUtils.addClass(this.element, 'focused');
     };
@@ -313,7 +321,7 @@ class Slect<T extends SlectOption> {
 
     clearSelectedOptions() {
         this.selectedOptions = [];
-        this.onSelect && this.onSelect(this, []);
+        if (this.onSelect) this.onSelect(this, []);
         this.updateSuggestionList();
     }
 
@@ -326,7 +334,12 @@ class Slect<T extends SlectOption> {
             .map(option => option.label)
             .join(', ');
         this.inputEl.value = value;
-        this.valueElement.innerText = value ? value : this.config.placeholder;
+
+        const changeEvent = document.createEvent('Event');
+        changeEvent.initEvent('change', false, true);
+        this.inputEl.dispatchEvent(changeEvent);
+
+        this.valueElement.innerText = value || this.config.placeholder;
     }
 
     updateSuggestionList(text: string = '') {
@@ -387,9 +400,7 @@ class Slect<T extends SlectOption> {
         this.suggestionList.selectedOptions = this.selectedOptions;
     }
 
-    static get version(): string {
-        return process.env.RELEASE;
-    }
+    static version = process.env.RELEASE;
 }
 
 export default Slect;

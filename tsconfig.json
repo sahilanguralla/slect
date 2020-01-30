@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
+        "module": "es6",
         "moduleResolution": "node",
+        "target": "es5",
         "jsx": "react",
         "lib": ["es2015", "dom"],
         "types": ["webpack-env"],

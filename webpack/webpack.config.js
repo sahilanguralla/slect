@@ -5,18 +5,18 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
 
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+
 const gitRevisionPlugin = new GitRevisionPlugin({
     lightweightTags: true
 });
 
-let supportedBrowsers = ['> 0.01%', 'android >= 2'];
+const supportedBrowsers = ['> 0.01%', 'android >= 2'];
 
 const libraryName = 'Slect';
 
 const config = {
     name: libraryName.toLowerCase(),
     entry: {
-        slect: './src/index.ts',
         'slect.min': './src/index.ts'
     },
     output: {
@@ -41,6 +41,9 @@ const config = {
                     {
                         loader: 'postcss-loader',
                         options: {
+                            autoprefixer: {
+                                browsers: supportedBrowsers
+                            },
                             plugins: () => [autoprefixer]
                         }
                     },
@@ -63,26 +66,6 @@ const config = {
                         }
                     }
                 ]
-            },
-            {
-                test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            [
-                                'env',
-                                {
-                                    targets: {
-                                        browsers: supportedBrowsers
-                                    }
-                                }
-                            ],
-                            'stage-0'
-                        ]
-                    }
-                }
             },
             {
                 test: /\.svg$/,
