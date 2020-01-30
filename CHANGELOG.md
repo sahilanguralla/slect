@@ -1,0 +1,10 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.1.1](https://github.com/sahilanguralla/slect/compare/v0.0.26...v0.1.1) (2020-01-30)
+
+
+### Bug Fixes
+
+* **focus:** fixed options list not opening when programmatic focused on input ([26f66a5](https://github.com/sahilanguralla/slect/commit/26f66a50a569d85ebc995426a8f35f52baa9e548))
