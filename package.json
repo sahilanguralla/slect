@@ -1,6 +1,6 @@
 {
     "name": "slect",
-    "version": "0.0.26",
+    "version": "0.1.0",
     "description": "A Javascript select field library.",
     "repository": "https://github.com/sahilanguralla/slect.git",
     "license": "MIT",
@@ -8,10 +8,11 @@
         "lint": "eslint --fix --ext .ts,.js src/",
         "lint:staged": "lint-staged && tsc --noEmit -p .",
         "start": "webpack-dev-server --config webpack/webpack.dev.config.js --color --progress",
-        "prepublishOnly": "run-s build",
+        "prepublishOnly": "run-s build version",
         "build": "rm -rf ./dist && run-p build:main build:module",
         "build:module": "tsc --module commonjs --target es2017 --declaration --outDir ./dist/lib && mkdir dist/lib/assets && lessc src/assets/less/slect.less dist/lib/css/slect.css",
-        "build:main": "webpack --config webpack/webpack.prod.config.js --color --progress"
+        "build:main": "webpack --config webpack/webpack.prod.config.js --color --progress",
+        "version": "HUSKY_SKIP_HOOKS=1 standard-version"
     },
     "lint-staged": {
         "linters": {
@@ -57,6 +58,7 @@
         "postcss-loader": "^2.1.5",
         "pre-commit": "^1.2.2",
         "prettier": "^1.19.1",
+        "standard-version": "^7.1.0",
         "svg-inline-loader": "^0.8.0",
         "terser-webpack-plugin": "^2.3.3",
         "ts-loader": "^5.4.5",
